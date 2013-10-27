@@ -45,28 +45,42 @@
 #   end
 # end
 
-set :css_dir, "css"
-
-set :js_dir, "js"
-
+set :css_dir,    "css"
+set :js_dir,     "js"
 set :images_dir, "img"
 
-# Build-specific configuration
 configure :build do
-  # For example, change the Compass output style for deployment
-  # activate :minify_css
+  ignore "js/src/*"
+  ignore "css/src/*"
+  
+  require "yui/compressor"
+  activate :minify_css
+  set :css_compressor, ::YUI::CssCompressor.new
 
-  # Minify Javascript on build
-  # activate :minify_javascript
+  require "closure-compiler"
+  activate :minify_javascript
+  set :js_compressor, ::Closure::Compiler.new
 
-  # Enable cache buster
-  # activate :asset_hash
+  activate :minify_html
+
+  activate :image_optim do |options|
+    options[:verbose] = true
+    options[:nice]    = true
+    options[:threads] = true
+
+    options[:image_extensions] = %w(.png .jpg .gif)
+
+    options[:pngcrush]  = {:chunks => ["alla"], :fix => true, :brute => true}
+    options[:pngout]    = false
+    options[:optipng]   = {:level => 7, :interlace => false}
+    options[:advpng]    = {:level => 4}
+    options[:jpegoptim] = {:strip => ["all"], :max_quality => 90}
+    options[:jpegtran]  = {:copy_chunks => false, :progressive => true, :jpegrescan => true}
+    options[:gifsicle]  = {:interlace => false}
+  end
 
   # Use relative URLs
   # activate :relative_assets
-
-  # Or use a different image path
-  # set :http_path, "/Content/images/"
 end
 
 activate :deploy do |deploy|
