@@ -79,8 +79,7 @@ configure :build do
     options[:gifsicle]  = {:interlace => false}
   end
 
-  # Use relative URLs
-  # activate :relative_assets
+  activate :relative_assets
 end
 
 activate :deploy do |deploy|
