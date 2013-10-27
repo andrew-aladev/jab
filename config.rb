@@ -68,7 +68,7 @@ configure :build do
     options[:nice]    = true
     options[:threads] = true
 
-    options[:image_extensions] = %w(.png .jpg .gif)
+    options[:image_extensions] = [".png", ".jpg", ".gif"]
 
     options[:pngcrush]  = {:chunks => ["alla"], :fix => true, :brute => true}
     options[:pngout]    = false
