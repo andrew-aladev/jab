@@ -63,20 +63,20 @@ configure :build do
 
   activate :minify_html
 
-  activate :image_optim do |options|
-    options[:verbose] = true
-    options[:nice]    = true
-    options[:threads] = true
+  activate :imageoptim do |options|
+    options.verbose = true
+    options.nice    = true
+    options.threads = true
 
-    options[:image_extensions] = [".png", ".jpg", ".gif"]
+    options.image_extensions = [".png", ".jpg", ".gif"]
 
-    options[:pngcrush]  = {:chunks => ["alla"], :fix => true, :brute => true}
-    options[:pngout]    = false
-    options[:optipng]   = {:level => 7, :interlace => false}
-    options[:advpng]    = {:level => 4}
-    options[:jpegoptim] = {:strip => ["all"], :max_quality => 90}
-    options[:jpegtran]  = {:copy_chunks => false, :progressive => true, :jpegrescan => true}
-    options[:gifsicle]  = {:interlace => false}
+    options.pngcrush_options  = {:chunks => ["alla"], :fix => true, :brute => true}
+    options.pngout_options    = false
+    options.optipng_options   = {:level => 7, :interlace => false}
+    options.advpng_options    = {:level => 4}
+    options.jpegoptim_options = {:strip => ["all"], :max_quality => 90}
+    options.jpegtran_options  = {:copy_chunks => false, :progressive => true, :jpegrescan => true}
+    options.gifsicle_options  = {:interlace => false}
   end
 
   activate :relative_assets
