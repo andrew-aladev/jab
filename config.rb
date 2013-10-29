@@ -52,6 +52,7 @@ set :images_dir, "img"
 configure :build do
   ignore "js/src/*"
   ignore "css/src/*"
+  ignore "partials/*"
   
   require "yui/compressor"
   activate :minify_css

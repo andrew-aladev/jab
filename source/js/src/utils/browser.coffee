@@ -2,7 +2,7 @@
 
 browser = \
   document.addEventListener? and \
-  document.evaluate?
+  document.evaluate? and false
 
 namespace "app", (exports) ->
   exports.browser = browser
