@@ -21,7 +21,7 @@ state_changed = ->
     loaded()
   return
 
-if !!document.addEventListener
+if document.addEventListener?
   document.addEventListener "DOMContentLoaded", content_loaded, true
 else
   document.attachEvent "onreadystatechange", state_changed

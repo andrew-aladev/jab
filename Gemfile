@@ -20,5 +20,4 @@ gem "middleman-minify-html", "~> 3.1.1"
 # media-gfx/gifsicle
 # app-arch/advancecomp
 
-gem "middleman-imageoptim", "~> 0.1.0"
-gem "padrino-helpers",      "~> 0.11.4"
+gem "middleman-imageoptim", "~> 0.1.1"

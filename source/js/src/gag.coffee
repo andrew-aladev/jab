@@ -2,10 +2,11 @@
 
 class Gag
   constructor : ->
-    @el = document.getElementById "gag"
+    @el = document.documentElement
   
   show : ->
-    @el.className = @el.className + " visible"
+    @el.className = @el.className + " gag-visible"
+    return
 
 namespace "app", (exports) ->
   exports.Gag = Gag
