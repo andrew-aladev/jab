@@ -52,6 +52,7 @@ set :images_dir, "img"
 configure :build do
   ignore "js/src/*"
   ignore "css/src/*"
+  ignore "partials/*"
   
   require "yui/compressor"
   activate :minify_css
@@ -70,7 +71,7 @@ configure :build do
 
     options.image_extensions = [".png", ".jpg", ".gif"]
 
-    options.pngcrush_options  = {:chunks => ["alla"], :fix => true, :brute => true}
+    options.pngcrush_options  = {:chunks => ["alla"], :fix => true, :brute => false}
     options.pngout_options    = false
     options.optipng_options   = {:level => 7, :interlace => false}
     options.advpng_options    = {:level => 4}
