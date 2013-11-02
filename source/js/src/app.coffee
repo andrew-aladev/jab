@@ -1,6 +1,7 @@
 #= require src/utils/namespacing
 #= require src/utils/domready
 #= require src/utils/browser
+#= require src/analytics
 #= require src/gag
 
 class Application
