@@ -50,6 +50,7 @@ set :js_dir,     "js"
 set :images_dir, "img"
 
 configure :build do
+  ignore "img/favicon/*"
   ignore "js/src/*"
   ignore "css/src/*"
   ignore "partials/*"
