@@ -4,7 +4,6 @@
 
 compass_config do |config|
   config.output_style = :expanded
-  # config.generated_images_dir = "sprites/"
 end
 
 ###
