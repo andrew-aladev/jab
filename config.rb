@@ -2,10 +2,10 @@
 # Compass
 ###
 
-# Change Compass configuration
-# compass_config do |config|
-#   config.output_style = :compact
-# end
+compass_config do |config|
+  config.output_style = :expanded
+  # config.generated_images_dir = "sprites/"
+end
 
 ###
 # Page options, layouts, aliases and proxies
@@ -50,6 +50,7 @@ set :js_dir,     "js"
 set :images_dir, "img"
 
 configure :build do
+  ignore "img/menu/*"
   ignore "img/favicon/*"
   ignore "js/src/*"
   ignore "css/src/*"

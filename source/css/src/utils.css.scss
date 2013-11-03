@@ -1,0 +1,12 @@
+.clearfix:before,
+.clearfix:after {
+  content : "";
+  display : table;
+} 
+.clearfix:after {
+  clear: both;
+}
+
+.not-selectable {
+  user-select : none;
+}

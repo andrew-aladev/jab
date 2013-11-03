@@ -1,0 +1,108 @@
+$menu-spacing : 5px;
+@import "../img/menu/*.png";
+
+.head {
+  width         : 100%;
+  height        : 45px;
+  background    : linear-gradient(#fff, #eee);
+  border-bottom : 1px solid #aaa;
+  font-size     : 14px;
+  
+  .menu {
+    width   : 990px;
+    height  : 100%;
+    margin  : 0 auto;
+    padding : 0;
+    
+    list-style-type : none;
+    
+    .logo {
+      width  : menu-sprite-width(logo);
+      height : 100%;
+      float  : left;
+      
+      a {
+        display : block;
+        width   : 100%;
+        height  : menu-sprite-height(logo);
+        cursor  : pointer;
+        @include menu-sprite(logo);
+      }
+    }
+    .search {
+      height : 100%;
+      float  : left;
+      
+      form {
+        margin        : 11px 0 0 15px;
+        border        : 1px solid #aaa;
+        border-radius : 2px;
+        background    : #fff;
+        
+        &.focus {
+          border-color : #5995ff;
+          box-shadow   : 0 0 5px #8cc2ff;
+        }
+        
+        .query {
+          display     : block;
+          float       : left;
+          width       : 185px;
+          height      : 14px;
+          margin      : 0;
+          padding     : 4px 7px;
+          border      : none;
+          line-height : 14px;
+          
+          &:focus {
+            outline : none;
+          }
+        }
+        .submit {
+          display : block;
+          float   : left;
+          width   : 22px;
+          height  : 22px;
+          border  : none;
+          cursor  : pointer;
+          
+          @include menu-sprite(search);
+          @include menu-sprite-position(search, 4px, 2px);
+          
+          &:focus {
+            outline : none;
+          }
+        }
+      }
+    }
+    .github {
+      width        : menu-sprite-width(github);
+      height       : 100%;
+      float        : right;
+      margin-right : 7px;
+      
+      a {
+        display    : block;
+        width      : 100%;
+        height     : menu-sprite-height(github);
+        margin-top : 4px;
+        cursor     : pointer;
+        @include menu-sprite(github);
+      }
+    }
+    .lor {
+      width  : menu-sprite-width(lor);
+      height : 100%;
+      float  : right;
+      
+      a {
+        display    : block;
+        width      : 100%;
+        height     : menu-sprite-height(lor);
+        margin-top : 4px;
+        cursor     : pointer;
+        @include menu-sprite(lor);
+      }
+    }
+  }
+}
