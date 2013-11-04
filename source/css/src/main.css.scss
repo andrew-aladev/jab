@@ -1,7 +1,13 @@
 body {
   margin : 0;
-  font   : 12px "osans_regular";
+  font   : 13px "osans_regular";
+  color  : #444;
+}
+a {
+  color : #0069FF;
+  text-decoration : none;
 }
 @import "utils";
 @import "head";
+@import "content";
 @import "footer";

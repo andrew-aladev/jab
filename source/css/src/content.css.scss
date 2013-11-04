@@ -1,0 +1,56 @@
+@import "../img/content/*.png";
+
+.content {
+  width     : 100%;
+  max-width : 1000px;
+  margin    : 0 auto;
+  padding   : 0;
+  
+  list-style-type : none;
+  
+  li {
+    margin : 0 2px;
+    border : 1px solid #bbb;
+    
+    .label {
+      position      : relative;
+      width         : 100%;
+      min-height    : 25px;
+      background    : linear-gradient(#fff, #f5f5f5);
+      border-bottom : 1px solid #bbb;
+      
+      h1 {
+        width       : 100%;
+        margin      : 0;
+        padding     : 3px 60px 2px 30px;
+        font-family : "osans_bold";
+        font-weight : normal;
+        font-size   : 15px;
+        color       : #333;
+        line-height : 20px;
+        @include content-sprite(note);
+        @include content-sprite-position(note, 7px, 3px);
+      }
+      .date {
+        position      : absolute;
+        top           : 0;
+        right         : 0;
+        margin        : 0;
+        padding-right : 7px;
+        line-height   : 25px;
+      }
+    }
+    .topic {
+      padding : 7px 10px;
+      
+      p {
+        margin      : 0;
+        text-indent : 1em;
+      }
+      .more {
+        display     : block;
+        text-indent : 1em;
+      }
+    }
+  }
+}

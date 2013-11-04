@@ -49,7 +49,10 @@ set :js_dir,     "js"
 set :images_dir, "img"
 
 configure :build do
-  ignore "img/menu/*"
+  ignore "img/src/*"
+  ignore "img/head/*"
+  ignore "img/content/*"
+  ignore "img/footer/*"
   ignore "img/favicon/*"
   ignore "js/src/*"
   ignore "css/src/*"

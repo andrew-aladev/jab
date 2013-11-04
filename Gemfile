@@ -10,6 +10,7 @@ gem "middleman-deploy",      "~> 0.1.3"
 gem "closure-compiler",      "~> 1.1.10"
 gem "yui-compressor",        "~> 0.12.0"
 gem "middleman-minify-html", "~> 3.1.1"
+gem "middleman-syntax",      "~> 1.2.1"
 
 # this should be installed in gentoo global via emerge
 # media-gfx/pngcrush
