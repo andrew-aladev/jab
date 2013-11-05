@@ -2,10 +2,9 @@
 # Compass
 ###
 
-# Change Compass configuration
-# compass_config do |config|
-#   config.output_style = :compact
-# end
+compass_config do |config|
+  config.output_style = :expanded
+end
 
 ###
 # Page options, layouts, aliases and proxies
@@ -50,6 +49,11 @@ set :js_dir,     "js"
 set :images_dir, "img"
 
 configure :build do
+  ignore "img/src/*"
+  ignore "img/head/*"
+  ignore "img/content/*"
+  ignore "img/footer/*"
+  ignore "img/favicon/*"
   ignore "js/src/*"
   ignore "css/src/*"
   ignore "partials/*"

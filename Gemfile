@@ -5,12 +5,12 @@ gem "bundler",      "~> 1.3.5"
 gem "rb-inotify",   "~> 0.9.2"
 gem "eventmachine", "~> 1.0.3"
 
-gem "thor",                  "~> 0.17.0"
-gem "middleman",             :git => "git@github.com:andrew-aladev/middleman.git"
+gem "middleman",             "~> 3.2.0"
 gem "middleman-deploy",      "~> 0.1.3"
 gem "closure-compiler",      "~> 1.1.10"
 gem "yui-compressor",        "~> 0.12.0"
 gem "middleman-minify-html", "~> 3.1.1"
+gem "middleman-syntax",      "~> 1.2.1"
 
 # this should be installed in gentoo global via emerge
 # media-gfx/pngcrush
@@ -20,4 +20,4 @@ gem "middleman-minify-html", "~> 3.1.1"
 # media-gfx/gifsicle
 # app-arch/advancecomp
 
-gem "middleman-imageoptim", "~> 0.1.2"
+gem "middleman-imageoptim", "~> 0.1.3"
