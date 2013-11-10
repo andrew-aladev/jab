@@ -25,8 +25,11 @@
 }
 
 body.splash {
-  overflow : hidden;
-  
+  .head,
+  .content,
+  .footer {
+    display : none;
+  }
   .splash-overlay {
     display : block;
   }

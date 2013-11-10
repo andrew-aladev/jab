@@ -1,3 +1,6 @@
-source/img/menu-*.png
+source/img/global-*.png
+source/img/content-*.png
+source/img/footer-*.png
+source/img/head-*.png
 Gemfile.lock
 build

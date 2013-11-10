@@ -35,17 +35,25 @@
         &.firefox {
           margin-right : 10px;
           a {
-            background : url("../img/gag/browsers.png") no-repeat -2px 0;
+            width  : global-sprite-width(firefox);
+            height : 150px;
+            @include global-sprite(firefox);
+            @include global-sprite-position(firefox, 0, 12px);
           }
         }
         &.chrome {
           margin-right : 10px;
           a {
-            background : url("../img/gag/browsers.png") no-repeat -134px 0;
+            width  : global-sprite-width(chrome);
+            height : 150px;
+            @include global-sprite(chrome);
+            @include global-sprite-position(chrome, 0, 10px);
           }
         }
         &.safari a {
-          background : url("../img/gag/browsers.png") no-repeat -267px 0;
+          width  : global-sprite-width(safari);
+          height : 150px;
+          @include global-sprite(safari);
         }
       }
     }
@@ -62,6 +70,11 @@ html.gag-visible {
   body {
     overflow : hidden;
     
+    .head,
+    .content,
+    .footer {
+      display : none;
+    }
     .gag-overlay {
       display : block;
     }

@@ -32,17 +32,36 @@ end
 ###
 
 # Automatic image dimensions on image_tag helper
-# activate :automatic_image_sizes
+activate :automatic_image_sizes
 
 # Reload the browser automatically whenever files change
 # activate :livereload
 
-# Methods defined in the helpers block are available in templates
-# helpers do
-#   def some_helper
-#     "Helping"
-#   end
-# end
+helpers do
+  def image_tag(path, params={})
+    if !params.has_key?(:"data-width") && !params.has_key?(:"data-height") && !path.include?("://")
+      params[:alt] ||= ""
+
+      real_path = path
+      real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')
+      full_path = File.join(source_dir, real_path)
+
+      if File.exists?(full_path)
+        begin
+          width, height = ::FastImage.size(full_path, :raise_on_failure => true)
+          params[:"data-width"]  = width
+          params[:"data-height"] = height
+        rescue FastImage::UnknownImageType
+          # No message, it's just not supported
+        rescue
+          warn "Couldn't determine dimensions for image #{path}: #{$!.message}"
+        end
+      end
+    end
+
+    super(path, params)
+  end
+end
 
 activate :syntax
 

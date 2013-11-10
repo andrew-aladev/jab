@@ -1,13 +1,20 @@
-body {
-  margin : 0;
-  font   : 13px "osans_regular";
-  color  : #444;
+html {
+  height : 100%;
+  
+  body {
+    position : relative;
+    height   : 100%;
+    margin   : 0;
+    font     : 13px "osans_regular";
+    color    : #444;
+  }
 }
 a {
   color : #0069FF;
   text-decoration : none;
 }
-@import "utils";
+@import "global/main";
+@import "utils/main";
 @import "head";
 @import "content";
 @import "footer";
