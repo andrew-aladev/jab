@@ -41,22 +41,28 @@ class Dom
     else
       new Dom select_multiple(selector, @elements)
   
-  bind : (event, callback) ->
+  bind : (events, callback) ->
+    if typeof(events) is "string"
+      events = [events]
     for element in @elements
-      element.addEventListener event, callback, false
+      for event in events
+        element.addEventListener event, callback, false
     return this
   
-  one : (event, callback) ->
+  one : (events, callback) ->
     self = this
     callback_wrapper = ->
       callback.apply this, arguments
-      self.unbind event, callback_wrapper
+      self.unbind events, callback_wrapper
     
-    @bind event, callback_wrapper
+    @bind events, callback_wrapper
   
-  unbind : (event, callback) ->
+  unbind : (events, callback) ->
+    if typeof(events) is "string"
+      events = [events]
     for element in @elements
-      element.removeEventListener event, callback, false
+      for event in events
+        element.removeEventListener event, callback, false
     return this
   
   get : (index) ->

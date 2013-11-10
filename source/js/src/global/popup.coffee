@@ -40,10 +40,10 @@ class Popup
   set_content : (elements, width, height) ->
     @wrapper.empty().append(elements)
     @content.css {
-      width         : width + "px"
-      height        : height + "px"
-      "margin-left" : - width / 2 + "px"
-      "margin-top"  : - height / 2 + "px"
+      width      : width + "px"
+      height     : height + "px"
+      marginLeft : - width / 2 + "px"
+      marginTop  : - height / 2 + "px"
     }
   
   show : (callback) ->
@@ -53,14 +53,14 @@ class Popup
     }
     
     if callback?
-      @overlay.one "webkitTransitionEnd", ->
+      @overlay.one "transitionend", ->
         callback()
     setTimeout =>
       @body.add_class "popup"
     , 0
   
   hide : (callback) ->
-    @overlay.one "webkitTransitionEnd", =>
+    @overlay.one "transitionend", =>
       @overlay.css {
         display : "none"
       }
