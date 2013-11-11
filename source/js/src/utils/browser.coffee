@@ -6,6 +6,7 @@ checks = [
   String.prototype.trim?
   Array.prototype.indexOf?
   window.encodeURI?, window.encodeURIComponent?
+  window.getComputedStyle?
 ]
 browser = true
 for check in checks

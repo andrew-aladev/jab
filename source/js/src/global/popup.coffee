@@ -48,19 +48,18 @@ class Popup
   
   show : (callback) ->
     @bind()
-    @overlay.css {
+    @overlay.css({
       display : "block"
-    }
+    })
+    .render ["display"]
     
     if callback?
-      @overlay.one "transitionend", ->
+      @overlay.one ["webkitTransitionEnd", "transitionend"], ->
         callback()
-    setTimeout =>
-      @body.add_class "popup"
-    , 0
+    @body.add_class "popup"
   
   hide : (callback) ->
-    @overlay.one "transitionend", =>
+    @overlay.one ["webkitTransitionEnd", "transitionend"], =>
       @overlay.css {
         display : "none"
       }

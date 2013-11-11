@@ -118,5 +118,12 @@ class Dom
         element.style[key] = hash[key]
     return this
 
+  # http://stackoverflow.com/questions/19895932/callback-after-the-style-has-been-rendered
+  render : (styles) ->
+    for element in @elements
+      for style in styles
+        getComputedStyle(element)[style]
+    return this
+
 namespace "app", (exports) ->
   exports.$ = $
