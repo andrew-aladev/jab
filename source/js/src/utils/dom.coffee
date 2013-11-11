@@ -19,18 +19,21 @@ select_multiple = (selector, parents) ->
       element = result.iterateNext()
   elements
 
-$ = (selector, single) ->
-  if single
-    new Dom select_single(selector, document)
+$ = (selector, is_single) ->
+  if typeof(selector) is "string"
+    if is_single
+      new Dom select_single(selector, document)
+    else
+      new Dom select_multiple(selector, [document])
   else
-    new Dom select_multiple(selector, [document])
+    new Dom [selector]
 
 class Dom
   constructor : (elements) ->
     @elements = elements
   
-  search : (selector, single) ->
-    if single
+  search : (selector, is_single) ->
+    if is_single
       if @elements.length > 0
         new Dom select_single(selector, @elements[0])
       else
@@ -38,21 +41,37 @@ class Dom
     else
       new Dom select_multiple(selector, @elements)
   
-  bind : (event, callback) ->
+  bind : (events, callback) ->
+    if typeof(events) is "string"
+      events = [events]
     for element in @elements
-      element.addEventListener event, callback, false
+      for event in events
+        element.addEventListener event, callback, false
     return this
   
-  unbind : (event, callback) ->
+  one : (events, callback) ->
+    self = this
+    callback_wrapper = ->
+      callback.apply this, arguments
+      self.unbind events, callback_wrapper
+    
+    @bind events, callback_wrapper
+  
+  unbind : (events, callback) ->
+    if typeof(events) is "string"
+      events = [events]
     for element in @elements
-      element.removeEventListener event, callback, false
+      for event in events
+        element.removeEventListener event, callback, false
     return this
   
   get : (index) ->
     @elements[index]
   
-  to_array : ->
-    @elements
+  each : (callback) ->
+    for index in [0...@elements.length]
+      callback @elements[index], index
+    return this
   
   size : ->
     @elements.length
@@ -73,8 +92,31 @@ class Dom
       if element.classList.contains(klass)
         found = true
         break
-    found
+    return found
   
+  clone : (deep) ->
+    elements = []
+    for element in @elements
+      elements.push element.cloneNode(deep)
+    return new Dom elements
+  
+  empty : ->
+    for element in @elements
+      while (child = element.firstChild)?
+        element.removeChild child
+    return this
+  
+  append : (dom) ->
+    for element in @elements
+      for child_element in dom.elements
+        element.appendChild child_element
+    return this
+  
+  css : (hash) ->
+    for element in @elements
+      for key of hash
+        element.style[key] = hash[key]
+    return this
 
 namespace "app", (exports) ->
   exports.$ = $

@@ -3,10 +3,13 @@
   %head
     %meta(charset="utf-8")
     %title
-      = yield_content(:title)
+      = yield_content :title
     %link(rel="icon" type="image/ico" href="img/favicon.ico")
     = stylesheet_link_tag "all"
     = javascript_include_tag "all"
   
   %body.splash
     = yield
+    = partial "partials/global/splash"
+    = partial "partials/global/gag"
+    = partial "partials/global/popup"

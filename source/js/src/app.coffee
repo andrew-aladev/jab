@@ -1,8 +1,10 @@
 #= require src/utils/namespacing
 #= require src/utils/domready
 #= require src/utils/browser
-#= require src/gag
+#= require src/global/gag
+#= require src/global/popup
 #= require src/head/main
+#= require src/content/main
 
 class Application
   constructor : ->
@@ -22,7 +24,9 @@ class Application
     return
   
   init : ->
-    @head = new app.Head()
+    @head    = new app.Head()
+    @content = new app.Content()
+    app.popup.ready()
     return
 
 namespace "app", (exports) ->
