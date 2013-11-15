@@ -102,8 +102,7 @@ class Dom
   
   empty : ->
     for element in @elements
-      while (child = element.firstChild)?
-        element.removeChild child
+      element.innerHTML = ""
     return this
   
   append : (dom) ->
