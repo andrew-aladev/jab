@@ -13,9 +13,9 @@ class Popup
     return
 
   init : ->
-    @_overlay_click  = app.proxy this, @overlay_click
-    @_wrapper_click  = app.proxy this, @wrapper_click
-    @_keyup          = app.proxy this, @keyup
+    @_overlay_click  = @overlay_click.bind this
+    @_wrapper_click  = @wrapper_click.bind this
+    @_keyup          = @keyup.bind this
 
   bind : ->
     @overlay.bind "click", @_overlay_click

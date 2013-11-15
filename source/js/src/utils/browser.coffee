@@ -5,6 +5,7 @@ checks = [
   document.evaluate?
   String.prototype.trim?
   Array.prototype.indexOf?
+  Function.prototype.bind?
   window.encodeURI?, window.encodeURIComponent?
   window.getComputedStyle?
 ]

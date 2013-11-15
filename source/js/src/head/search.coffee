@@ -10,12 +10,12 @@ class Search
     @bind()
   
   bind : ->
-    @_submit = app.proxy this, this.submit
+    @_submit = @submit.bind this
     @form.bind   "submit", @_submit
     @button.bind "click",  @_submit
     
-    @_focus = app.proxy this, this.focus
-    @_blur  = app.proxy this, this.blur
+    @_focus = @focus.bind this
+    @_blur  = @blur.bind this
     @query.bind("focus", @_focus).bind("blur", @_blur)
   
   submit : (event) ->

@@ -28,7 +28,7 @@ class Picture
       @bind()
   
   bind : ->
-    @_click = app.proxy this, @click
+    @_click = @click.bind this
     @box.bind "click", @_click
   
   click : ->
