@@ -80,6 +80,16 @@ $head-spacing : 5px;
         }
       }
     }
+    .about {
+      float        : right;
+      margin-right : 15px;
+      height       : 100%;
+      line-height  : 45px;
+      
+      a {
+        cursor : pointer;
+      }
+    }
     .github {
       width        : head-sprite-width(github);
       height       : 100%;

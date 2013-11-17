@@ -1,35 +1,57 @@
 @import "../img/footer/*.png";
 .footer {
-  width      : 100%;
-  height     : 105px;
-  margin-top : 10px;
+  width     : 100%;
+  height    : 105px;
+  max-width : 1000px;
+  margin    : 10px auto 0 auto;
   
   .menu {
-    width      : 100%;
-    max-width  : 1000px;
     height     : 100%;
-    margin     : 0 auto;
-    padding    : 0;
+    margin     : 0 2px;
     border-top : 1px solid #bbb;
     
-    list-style-type : none;
-    
-    .logo {
-      display        : inline-block;
-      vertical-align : top;
+    .left {
+      width           : 240px;
+      float           : left;
+      margin          : 0;
+      padding         : 0;
+      list-style-type : none;
       
-      margin     : 4px 0 0 2px;
-      width      : footer-sprite-width(bear);
-      height     : footer-sprite-height(bear);
-      @include footer-sprite(bear);
+      .logo {
+        display        : inline-block;
+        vertical-align : top;
+        
+        margin     : 4px 0 0 2px;
+        width      : footer-sprite-width(bear);
+        height     : footer-sprite-height(bear);
+        @include footer-sprite(bear);
+      }
+      .copyright {
+        display        : inline-block;
+        vertical-align : top;
+        
+        height      : 100%;
+        margin-left : 7px;
+        line-height : 105px;
+      }
     }
-    .copyright {
-      display        : inline-block;
-      vertical-align : top;
+    
+    .right {
+      margin          : 0 0 0 240px;
+      padding         : 0;
+      text-align      : right;
+      list-style-type : none;
       
-      height      : 100%;
-      margin-left : 7px;
-      line-height : 105px;
+      li {
+        display        : inline-block;
+        vertical-align : top;
+        
+        a {
+          padding     : 0 10px;
+          line-height : 30px;
+          cursor      : pointer;
+        }
+      }
     }
   }
 }
