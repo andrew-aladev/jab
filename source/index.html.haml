@@ -13,8 +13,7 @@
             **Crossdev** in gentoo is a utility, that can create toolchain for **cross compilation**. But cross compilation has many disadvantages:
         %ol
           %li You can't run compiled software if host processor does not support target arch.
-          %li Programs, that compiles itself can't be supported.
-          %li You should support toolchain build configuration.
+          %li You should support toolchain build configuration for you program and for dependecies of your program, if it does not exist.
         %p
           :markdown
             It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
@@ -61,9 +60,22 @@
               echo 'FEATURES="splitdebug"' | sudo tee etc/portage/env/sys-libs/glibc > /dev/null
               sudo mkdir -p etc/portage/patches/sys-apps/sandbox-2.6
               sudo wget "https://www.puchuu.com/patches/sys-apps/sandbox-2.6/glibc-2.18.patch" -O etc/portage/patches/sys-apps/sandbox-2.6/glibc-2.18.patch
+              sudo mkdir -p etc/portage/env/dev-lang
+              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
+              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               
-              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc bash portage
-        %br
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc sys-devel/binutils bash portage findutils wget app-arch/tar sys-devel/make grep
+        
+        %p
+          You can copy toolchain to your workspace now and start prepairing chroot
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p ~/workspace
+              sudo cp -R /usr/arm-hardfloat-linux-gnueabi ~/workspace/
+              cd ~/workspace/arm-hardfloat-linux-gnueabi
+        
         %p
           :markdown
             It is time to install qemu.
@@ -90,6 +102,82 @@
           - code("shell") do
             :plain
               sudo rc-service qemu-binfmt start
+        
+        %p
+          Copy qemu emulator to chroot
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo cp /usr/bin/qemu-static-arm-binfmt usr/bin/
+              sudo cp /usr/bin/qemu-static-arm usr/bin/
+        
+        %p
+          Clean chroot environment
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rm -r tmp/portage/*
+              sudo rm etc/make.profile
+              sudo rm etc/portage/env/dev-lang/python
+              
+              sudo mkdir {proc,dev,sys}
+              sudo mkdir usr/portage/
+              
+              echo 'portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a etc/passwd > /dev/null
+              echo 'portage::250:portage' | sudo tee -a etc/group > /dev/null
+        
+        %p
+          Set etc/portage/make.conf to something like
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              SYNC="rsync://mirror.yandex.ru/gentoo-portage/"
+              GENTOO_MIRRORS="http://mirror.yandex.ru/gentoo-distfiles/"
+
+              CHOST="arm-hardfloat-linux-gnueabi"
+              CFLAGS="-O2 -pipe"
+              CXXFLAGS="${CFLAGS}"
+              MAKEOPTS="-j9"
+
+              FEATURES="noman nodoc noinfo"
+              ACCEPT_KEYWORDS="~arm"
+              LINGUAS="en"
+              USE="arm minimal unicode"
+
+              PORTDIR="/usr/portage"
+              PORTDIR_OVERLAY="/usr/portage"
+
+              PYTHON_TARGETS="python3_3"
+        %p
+          I am using AMD FX-8150, so MAKEOPTS is 8 + 1
+        
+        %p
+          Now mount, chroot and sync portage tree
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mount -t proc none proc/
+              sudo mount -o bind /sys sys/
+              sudo mount -o bind /dev dev/
+              sudo mount -o bind /dev/pts/ dev/pts/
+              sudo cp /etc/resolv.conf etc/
+              sudo chroot . /bin/bash
+              
+              env-update
+              emerge --sync
+              ln -s /usr/portage/profiles/default/linux/arm/ /etc/make.profile
+        
+        %p
+          Build usual software for projects. This process will be slow (especially configure)
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v baselayout
         
         / %br
         / %p Yay!
