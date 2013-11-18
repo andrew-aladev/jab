@@ -64,6 +64,7 @@ helpers do
 end
 
 activate :syntax
+set :markdown_engine, :redcarpet
 
 set :css_dir,    "css"
 set :js_dir,     "js"

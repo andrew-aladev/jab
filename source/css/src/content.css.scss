@@ -8,7 +8,7 @@
   
   list-style-type : none;
   
-  li {
+  > li {
     margin : 0 2px;
     border : 1px solid #bbb;
     
@@ -22,9 +22,8 @@
       h1 {
         margin      : 0;
         padding     : 3px 60px 2px 30px;
-        font-family : "osans_bold";
-        font-weight : normal;
-        font-size   : 15px;
+        font-weight : bold;
+        font-size   : 1em;
         color       : #333;
         line-height : 20px;
         @include content-sprite(note);
@@ -40,7 +39,8 @@
       }
     }
     .topic {
-      padding : 7px 10px;
+      position : relative;
+      padding  : 7px 10px;
       
       .picture {
         margin : 5px 0 5px 0;
@@ -54,12 +54,18 @@
         }
       }
       p {
-        margin      : 0;
+        margin      : 0.5em 0;
         text-indent : 1em;
       }
       .more {
         display     : block;
         text-indent : 1em;
+      }
+      ul, ol {
+        margin : 0.5em 0;
+      }
+      strong {
+        font-weight : bold;
       }
     }
   }
