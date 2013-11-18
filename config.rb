@@ -64,17 +64,19 @@ helpers do
 end
 
 activate :syntax
+set :markdown_engine, :redcarpet
 
 set :css_dir,    "css"
 set :js_dir,     "js"
 set :images_dir, "img"
 
 configure :build do
-  ignore "img/src/*"
-  ignore "img/head/*"
   ignore "img/content/*"
-  ignore "img/footer/*"
   ignore "img/favicon/*"
+  ignore "img/footer/*"
+  ignore "img/global/*"
+  ignore "img/head/*"
+  ignore "img/src/*"
   ignore "js/src/*"
   ignore "css/src/*"
   ignore "partials/*"

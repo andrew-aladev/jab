@@ -7,106 +7,134 @@ $head-spacing : 5px;
   margin-bottom : 10px;
   background    : linear-gradient(#fff, #eee);
   border-bottom : 1px solid #bbb;
-  font-size     : 14px;
+  font-size     : 1.1em;
   
   .menu {
     width     : 100%;
-    min-width : 410px;
-    max-width : 990px;
+    min-width : 475px;
+    max-width : 1000px;
     height    : 100%;
     margin    : 0 auto;
-    padding   : 0;
     
-    list-style-type : none;
-    
-    .logo {
-      width  : head-sprite-width(logo);
-      height : 100%;
-      float  : left;
+    .left {
+      float           : left;
+      margin          : 0 0 0 5px;
+      padding         : 0;
+      height          : 100%;
+      list-style-type : none;
       
-      a {
-        display : block;
-        width   : 100%;
-        height  : head-sprite-height(logo);
-        cursor  : pointer;
-        @include head-sprite(logo);
-      }
-    }
-    .search {
-      height : 100%;
-      float  : left;
-      
-      form {
-        margin        : 11px 0 0 15px;
-        border        : 1px solid #bbb;
-        border-radius : 2px;
-        background    : #fff;
+      .logo {
+        display        : inline-block;
+        vertical-align : top;
+        width          : head-sprite-width(logo);
+        height         : 100%;
         
-        &.focus {
-          border-color : #5995ff;
-          box-shadow   : 0 0 5px #8cc2ff;
-        }
-        
-        .query {
-          display        : inline-block;
-          vertical-align : top;
-          
-          width       : 185px;
-          height      : 14px;
-          margin      : 0;
-          padding     : 4px 7px;
-          border      : none;
-          line-height : 14px;
-          
-          &:focus {
-            outline : none;
-          }
-        }
-        .submit {
-          display        : inline-block;
-          vertical-align : top;
-          
-          width   : 22px;
-          height  : 22px;
-          border  : none;
+        a {
+          display : block;
+          width   : 100%;
+          height  : head-sprite-height(logo);
           cursor  : pointer;
+          @include head-sprite(logo);
+        }
+      }
+      .search {
+        display        : inline-block;
+        vertical-align : top;
+        height         : 100%;
+        
+        form {
+          margin        : 11px 0 0 10px;
+          border        : 1px solid #bbb;
+          border-radius : 2px;
+          background    : #fff;
           
-          @include head-sprite(search);
-          @include head-sprite-position(search, 4px, 2px);
+          &.focus {
+            border-color : #5995ff;
+            box-shadow   : 0 0 5px #8cc2ff;
+          }
           
-          &:focus {
-            outline : none;
+          .query {
+            display        : inline-block;
+            vertical-align : top;
+            
+            width       : 185px;
+            height      : 14px;
+            margin      : 0;
+            padding     : 4px 7px;
+            border      : none;
+            line-height : 14px;
+            
+            &:focus {
+              outline : none;
+            }
+          }
+          .submit {
+            display        : inline-block;
+            vertical-align : top;
+            
+            width   : 22px;
+            height  : 22px;
+            border  : none;
+            cursor  : pointer;
+            
+            @include head-sprite(search);
+            @include head-sprite-position(search, 4px, 2px);
+            
+            &:focus {
+              outline : none;
+            }
           }
         }
       }
     }
-    .github {
-      width        : head-sprite-width(github);
-      height       : 100%;
-      float        : right;
-      margin-right : 7px;
+    .right {
+      margin          : 0 5px 0 0;
+      padding         : 0;
+      height          : 100%;
+      list-style-type : none;
+      text-align      : right;
       
-      a {
-        display    : block;
-        width      : 100%;
-        height     : head-sprite-height(github);
-        margin-top : 4px;
-        cursor     : pointer;
-        @include head-sprite(github);
+      .about {
+        display        : inline-block;
+        vertical-align : top;
+        margin-right   : 10px;
+        height         : 100%;
+        line-height    : 45px;
+        
+        a {
+          cursor : pointer;
+        }
       }
-    }
-    .lor {
-      width  : head-sprite-width(lor);
-      height : 100%;
-      float  : right;
-      
-      a {
-        display    : block;
-        width      : 100%;
-        height     : head-sprite-height(lor);
-        margin-top : 4px;
-        cursor     : pointer;
-        @include head-sprite(lor);
+      .github {
+        display        : inline-block;
+        vertical-align : top;
+        width          : head-sprite-width(github);
+        height         : 100%;
+        margin-right   : 3px;
+        
+        a {
+          display    : block;
+          width      : 100%;
+          height     : head-sprite-height(github);
+          margin-top : 4px;
+          cursor     : pointer;
+          @include head-sprite(github);
+        }
+      }
+      .lor {
+        display        : inline-block;
+        vertical-align : top;
+        width          : head-sprite-width(lor);
+        height         : 100%;
+        
+        a {
+          display    : block;
+          width      : 100%;
+          height     : head-sprite-height(lor);
+          margin-top : 4px;
+          cursor     : pointer;
+          @include head-sprite(lor);
+        }
       }
     }
   }

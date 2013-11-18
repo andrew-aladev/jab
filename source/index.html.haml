@@ -1,4 +1,100 @@
 - content_for :title, "Home page"
-= partial "partials/head"
-= partial "partials/content"
-= partial "partials/footer"
+- content_for :content do
+  %ul.content
+    %li
+      .label
+        %h1
+          How to create full featured arm chroot environment in gentoo
+        %p.date
+          17.11.13
+      .topic
+        %p
+          :markdown
+            **Crossdev** in gentoo is a utility, that can create toolchain for **cross compilation**. But cross compilation has many disadvantages:
+        %ol
+          %li You can't run compiled software if host processor does not support target arch.
+          %li Programs, that compiles itself can't be supported.
+          %li You should support toolchain build configuration.
+        %p
+          :markdown
+            It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
+            For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** arch.
+        %p
+          :markdown
+            Lets create environment for future **armv8-a** 64 bit processor.
+        %br
+        
+        %p
+          First of all you should create usual crossdev environment for arm
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo emerge -v sys-devel/crossdev
+              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2 --l 2.18 --k 3.12 --b 2.23.2
+              
+              sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
+        
+        %p
+          Set the following configuration to /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              USE="${ARCH} minimal unicode"
+              CFLAGS="-O2 -pipe"
+              FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
+              PYTHON_TARGETS="python3_3"
+        
+        %p
+          Than you need to build minimal toolchain
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              cd /usr/arm-hardfloat-linux-gnueabi
+              sudo mkdir -p etc/portage/package.keywords
+              echo "=sys-libs/glibc-2.18 **" | sudo tee etc/portage/package.keywords/sys-libs > /dev/null
+              sudo mkdir -p etc/portage/package.use
+              echo ">=sys-devel/gcc-0 lto" | sudo tee etc/portage/package.use/sys-devel > /dev/null
+              sudo mkdir -p etc/portage/env/sys-libs
+              echo 'FEATURES="splitdebug"' | sudo tee etc/portage/env/sys-libs/glibc > /dev/null
+              sudo mkdir -p etc/portage/patches/sys-apps/sandbox-2.6
+              sudo wget "https://www.puchuu.com/patches/sys-apps/sandbox-2.6/glibc-2.18.patch" -O etc/portage/patches/sys-apps/sandbox-2.6/glibc-2.18.patch
+              
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc bash portage
+        %br
+        %p
+          :markdown
+            It is time to install qemu.
+            You need a binfmt wrapper, which [dont exist](https://lists.gnu.org/archive/html/qemu-devel/2011-09/msg03841.html) in qemu upstream.
+            So I've prepaired a simple patch.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /etc/portage/env/
+              echo 'QEMU_USER_TARGETS="arm"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
+              
+              sudo mkdir -p /etc/portage/package.env/
+              echo '>=app-emulation/qemu-user-0 qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
+              
+              sudo mkdir -p /etc/portage/patches/app-emulation/qemu-user-9999/
+              sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch" -O /etc/portage/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch
+              
+              sudo emerge -v =app-emulation/qemu-user-9999
+        
+        %p
+          :markdown
+            Now you can register **qemu-static-arm-binfmt** in kernel.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rc-service qemu-binfmt start
+        
+        / %br
+        / %p Yay!
+        / = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
+        / = preserve do
+        /   - code("c") do
+        /     :plain
+        / %a.more(href="#") Read more

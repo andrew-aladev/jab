@@ -11,6 +11,7 @@ gem "closure-compiler",      "~> 1.1.10"
 gem "yui-compressor",        "~> 0.12.0"
 gem "middleman-minify-html", "~> 3.1.1"
 gem "middleman-syntax",      "~> 1.2.1"
+gem "redcarpet",             "~> 3.0.0"
 
 # this should be installed in gentoo global via emerge
 # media-gfx/pngcrush

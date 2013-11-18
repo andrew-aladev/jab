@@ -1,9 +1,11 @@
 .highlight {
-  margin      : 5px 0;
-  padding     : 0 0 0 12px;
+  position    : relative;
+  margin      : 10px 0;
+  padding     : 0.5em 0 0.5em 2em;
   font-family : "meslo_regular";
-  font-size   : 13px;
-  word-wrap   : break-word;
+  font-size   : 0.9em;
+  white-space : pre-wrap;
+  background  : #f7f7f7;
   
   table {
     border-spacing : 0;

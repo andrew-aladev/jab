@@ -12,7 +12,7 @@
     position : absolute;
     left     : 50%;
     top      : 50%;
-    width    : 420px;
+    width    : 545px;
     height   : 190px;
     margin   : -95px 0 0 -200px;
     
@@ -50,6 +50,15 @@
             @include global-sprite-position(chrome, 0, 10px);
           }
         }
+        &.opera {
+          margin-right : 10px;
+          a {
+            width  : global-sprite-width(opera);
+            height : 150px;
+            @include global-sprite(opera);
+            @include global-sprite-position(opera, 0, 11px);
+          }
+        }
         &.safari a {
           width  : global-sprite-width(safari);
           height : 150px;
@@ -59,7 +68,7 @@
     }
     p {
       margin     : 15px 0 0 0;
-      font-size  : 16px;
+      font-size  : 1.2em;
       text-align : center;
     }
   }
