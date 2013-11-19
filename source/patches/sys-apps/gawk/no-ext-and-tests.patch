@@ -1,0 +1,69 @@
+diff --git a/Makefile.am b/Makefile.am
+index 8d977d7..403fd0b 100755
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -71,9 +71,7 @@ SUBDIRS = \
+ 	. \
+ 	awklib \
+ 	doc \
+-	po \
+-	extension \
+-	test
++	po
+ 
+ # what to make and install
+ bin_PROGRAMS = gawk
+diff --git a/Makefile.in b/Makefile.in
+old mode 100755
+new mode 100644
+index a1fc005..8b2d62b
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -449,9 +449,7 @@ SUBDIRS = \
+ 	. \
+ 	awklib \
+ 	doc \
+-	po \
+-	extension \
+-	test
++	po
+ 
+ include_HEADERS = gawkapi.h
+ 
+@@ -519,7 +517,7 @@ CLEANFILES = core core.*
+ MAINTAINERCLEANFILES = version.c
+ 
+ # We want hard links for install-exec-hook, below
+-LN = $(LN_S)
++LN = ln
+ all: config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
+@@ -1129,7 +1127,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS
+ # (This is done universally, which may not always be right, but
+ # there's no easy way to distinguish GNU from non-GNU systems.)
+ install-exec-hook:
+-foo:
+ 	(cd $(DESTDIR)$(bindir); \
+ 	$(LN) gawk$(EXEEXT) gawk-$(VERSION)$(EXEEXT) 2>/dev/null ; \
+ 	if [ ! -f awk ]; \
+diff --git a/awklib/Makefile.in b/awklib/Makefile.in
+old mode 100755
+new mode 100644
+diff --git a/doc/Makefile.in b/doc/Makefile.in
+old mode 100755
+new mode 100644
+diff --git a/test/Makefile.in b/test/Makefile.in
+old mode 100755
+new mode 100644
+index d36d41e..46e7f57
+--- a/test/Makefile.in
++++ b/test/Makefile.in
+@@ -3344,7 +3344,6 @@ procinfs:
+ 	@-$(CMP) $(srcdir)/$@.ok _$@ && rm -f _$@
+ 
+ pty1:
+-_pty1:
+ 	@echo $@
+ 	@AWKPATH=$(srcdir) $(AWK) -f $@.awk  >_$@ 2>&1 || echo EXIT CODE: $$? >>_$@
+ 	@-$(CMP) $(srcdir)/$@.ok _$@ && rm -f _$@

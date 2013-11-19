@@ -20,7 +20,7 @@
             For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** arch.
         %p
           :markdown
-            Lets create environment for future **armv8-a** 64 bit processor.
+            Lets create environment for arm arch.
         %br
         
         %p
@@ -35,7 +35,8 @@
               sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
         
         %p
-          Set the following configuration to /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf
+          :markdown
+            Set the following configuration to **/usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf**
         
         = preserve do
           - code("shell") do
@@ -64,10 +65,33 @@
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               
-              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc sys-devel/binutils bash portage findutils wget app-arch/tar sys-devel/make grep
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc sys-devel/binutils bash portage \
+                findutils wget app-arch/tar sys-devel/make grep patch
         
         %p
-          You can copy toolchain to your workspace now and start prepairing chroot
+          :markdown
+            You should make the gawk patchable, edit **/usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild**.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              src_prepare() {
+                ...
+                epatch_user
+              }
+        %p
+          Than emerge it.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo ebuild /usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild manifest
+              sudo mkdir -p etc/portage/patches/sys-apps/gawk-4.1.0
+              sudo wget "https://www.puchuu.com/patches/sys-apps/gawk/no-ext-and-tests.patch" -O etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
+              sudo arm-hardfloat-linux-gnueabi-emerge -v gawk
+        
+        %p
+          You can copy toolchain to your workspace now and start prepairing chroot.
         
         = preserve do
           - code("shell") do
@@ -76,6 +100,7 @@
               sudo cp -R /usr/arm-hardfloat-linux-gnueabi ~/workspace/
               cd ~/workspace/arm-hardfloat-linux-gnueabi
         
+        %br
         %p
           :markdown
             It is time to install qemu.
@@ -104,7 +129,7 @@
               sudo rc-service qemu-binfmt start
         
         %p
-          Copy qemu emulator to chroot
+          Copy qemu emulator to chroot.
         
         = preserve do
           - code("shell") do
@@ -113,7 +138,7 @@
               sudo cp /usr/bin/qemu-static-arm usr/bin/
         
         %p
-          Clean chroot environment
+          Clean chroot environment.
         
         = preserve do
           - code("shell") do
@@ -121,6 +146,7 @@
               sudo rm -r tmp/portage/*
               sudo rm etc/make.profile
               sudo rm etc/portage/env/dev-lang/python
+              sudo rm etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
               
               sudo mkdir {proc,dev,sys}
               sudo mkdir usr/portage/
@@ -129,7 +155,8 @@
               echo 'portage::250:portage' | sudo tee -a etc/group > /dev/null
         
         %p
-          Set etc/portage/make.conf to something like
+          :markdown
+            Set **etc/portage/make.conf** to something like.
         
         = preserve do
           - code("shell") do
@@ -151,9 +178,8 @@
               PORTDIR_OVERLAY="/usr/portage"
 
               PYTHON_TARGETS="python3_3"
-        %p
-          I am using AMD FX-8150, so MAKEOPTS is 8 + 1
         
+        %br
         %p
           Now mount, chroot and sync portage tree
         
@@ -178,11 +204,13 @@
           - code("shell") do
             :plain
               emerge -v baselayout
+              source /etc/profile
+              emerge -v gawk
+              emerge -v gzip
+              USE="-berkdb" emerge -v perl
+              USE="internal-glib" emerge -v pkgconfig
+              emerge -avuDN --with-bdeps=y world
         
-        / %br
-        / %p Yay!
-        / = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
-        / = preserve do
-        /   - code("c") do
-        /     :plain
-        / %a.more(href="#") Read more
+        %br
+        %p Yay!
+        = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
