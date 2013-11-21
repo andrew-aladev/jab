@@ -86,7 +86,7 @@
             :plain
               sudo ebuild /usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild manifest
               sudo mkdir -p etc/portage/patches/sys-apps/gawk-4.1.0
-              sudo wget "https://www.puchuu.com/patches/sys-apps/gawk/no-ext-and-tests.patch" -O etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
+              sudo wget "https://www.puchuu.com/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch" -O etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
               sudo arm-hardfloat-linux-gnueabi-emerge -v gawk
         
         %p
@@ -223,7 +223,7 @@
               emerge -v shadow
               emerge -vuDN --with-bdeps=y world
               
-              emerge -v gdb cmake valgrind
+              emerge -v gdb cmake
         
         %br
         %p
