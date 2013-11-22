@@ -90,7 +90,7 @@ configure :build do
   activate :minify_javascript
   set :js_compressor, ::Closure::Compiler.new
 
-  # activate :minify_html
+  activate :minify_html, :remove_http_protocol => false, :remove_https_protocol => false
 
   activate :imageoptim do |options|
     options.verbose = true
