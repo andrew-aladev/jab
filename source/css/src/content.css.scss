@@ -42,17 +42,6 @@
       position : relative;
       padding  : 7px 10px;
       
-      .picture {
-        margin : 5px 0 5px 0;
-        img {
-          display   : block;
-          max-width : 100%;
-          height    : auto;
-        }
-        &.clickable {
-          cursor : pointer;
-        }
-      }
       p {
         margin      : 0.5em 0;
         text-indent : 1em;
@@ -70,6 +59,18 @@
       }
       strong {
         font-weight : bold;
+      }
+    }
+    
+    .picture {
+      margin : 5px 0 5px 0;
+      img {
+          display   : block;
+          max-width : 100%;
+          height    : auto;
+      }
+      &.clickable {
+        cursor : pointer;
       }
     }
   }
