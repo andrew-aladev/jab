@@ -1,0 +1,244 @@
+- content_for :title, "ARM chroot"
+- content_for :description, "How to create full featured arm chroot environment in gentoo."
+- content_for :keywords, "arm, armv8, armv8-a, gcc, gdb, toolchain, stage3, qemu, cflags, chost"
+- content_for :content do
+  %ul.content
+    %li
+      .label
+        %h1
+          How to create full featured arm chroot environment in gentoo
+        %p.date
+          17.11.13
+      .topic
+        %p
+          :markdown
+            **Crossdev** in gentoo is a utility, that can create toolchain for **cross compilation**. But cross compilation has disadvantages:
+        %ol
+          %li You can't run compiled software if host processor does not support target arch.
+          %li You should support toolchain build configuration for you program and for dependecies of your program, if it does not exist.
+        %p
+          :markdown
+            It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
+            For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** arch.
+        %br
+        
+        %p
+          First of all you should create usual crossdev environment for arm
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo emerge -v sys-devel/crossdev
+              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2 --l 2.18 --k 3.12 --b 2.23.2
+              
+              sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
+        
+        %p
+          :markdown
+            Set the following configuration to **/usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf**
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              USE="${ARCH} minimal unicode"
+              CFLAGS="-O2 -pipe"
+              FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
+              PYTHON_TARGETS="python3_3"
+        
+        %p
+          Than you need to build minimal toolchain
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              cd /usr/arm-hardfloat-linux-gnueabi
+              sudo mkdir -p etc/portage/package.keywords
+              echo "=sys-libs/glibc-2.18 **" | sudo tee etc/portage/package.keywords/sys-libs > /dev/null
+              sudo mkdir -p etc/portage/package.use
+              echo ">=sys-devel/gcc-0 lto" | sudo tee etc/portage/package.use/sys-devel > /dev/null
+              sudo mkdir -p etc/portage/env/sys-libs
+              echo 'FEATURES="splitdebug"' | sudo tee etc/portage/env/sys-libs/glibc > /dev/null
+              sudo mkdir -p etc/portage/patches/sys-apps/sandbox-2.6
+              sudo wget "https://www.puchuu.com/patches/sys-apps/sandbox-2.6/glibc-2.18.patch" -O etc/portage/patches/sys-apps/sandbox-2.6/glibc-2.18.patch
+              sudo mkdir -p etc/portage/env/dev-lang
+              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
+              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
+              
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc sys-devel/binutils bash portage \
+                findutils wget app-arch/tar sys-devel/make grep patch
+        
+        %p
+          :markdown
+            You should make the gawk patchable, edit **/usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild**.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              src_prepare() {
+                ...
+                epatch_user
+              }
+        %p
+          Than emerge it.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo ebuild /usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild manifest
+              sudo mkdir -p etc/portage/patches/sys-apps/gawk-4.1.0
+              sudo wget "https://www.puchuu.com/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch" -O etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
+              sudo arm-hardfloat-linux-gnueabi-emerge -v gawk
+        
+        %p
+          You can copy toolchain to your workspace now and start prepairing chroot.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p ~/workspace
+              sudo cp -R /usr/arm-hardfloat-linux-gnueabi ~/workspace/
+              cd ~/workspace/arm-hardfloat-linux-gnueabi
+        
+        %br
+        %p
+          :markdown
+            It is time to install qemu.
+            You need a binfmt wrapper, which [dont exist](https://lists.gnu.org/archive/html/qemu-devel/2011-09/msg03841.html) in qemu upstream.
+            So I've prepaired a simple patch.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /etc/portage/env/
+              echo 'QEMU_USER_TARGETS="arm"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
+              
+              sudo mkdir -p /etc/portage/package.env/
+              echo '>=app-emulation/qemu-user-0 qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
+              
+              sudo mkdir -p /etc/portage/patches/app-emulation/qemu-user-9999/
+              sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch" -O /etc/portage/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch
+              
+              sudo emerge -v =app-emulation/qemu-user-9999
+        
+        %p
+          :markdown
+            Now you can register **qemu-static-arm-binfmt** in kernel.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rc-service qemu-binfmt start
+        
+        %p
+          Copy qemu emulator to chroot.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo cp /usr/bin/qemu-static-arm-binfmt usr/bin/
+              sudo cp /usr/bin/qemu-static-arm usr/bin/
+        
+        %p
+          Clean chroot environment.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rm -r tmp/portage/*
+              sudo rm etc/make.profile
+              sudo rm etc/portage/env/dev-lang/python
+              sudo rm etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
+              
+              sudo mkdir {proc,dev,sys,root}
+              sudo mkdir usr/portage/
+              
+              echo 'root:x:0:0:root:/root:/bin/bash
+              portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a etc/passwd > /dev/null
+              echo 'root:x:0:root
+              portage::250:portage' | sudo tee -a etc/group > /dev/null
+              
+              echo 'LANG="en_US.UTF-8"
+              LC_COLLATE="C"' | sudo tee -a etc/env.d/02locale > /dev/null
+              
+              echo 'en_US.UTF-8 UTF-8' | sudo tee -a etc/locale.gen > /dev/null
+        
+        %p
+          :markdown
+            Set **etc/portage/make.conf** to something like.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              SYNC="rsync://mirror.yandex.ru/gentoo-portage/"
+              GENTOO_MIRRORS="http://mirror.yandex.ru/gentoo-distfiles/"
+
+              CHOST="arm-hardfloat-linux-gnueabi"
+              CFLAGS="-O2 -pipe"
+              CXXFLAGS="${CFLAGS}"
+              MAKEOPTS="-j9"
+
+              FEATURES="noman nodoc noinfo"
+              ACCEPT_KEYWORDS="~arm"
+              LINGUAS="en"
+              USE="arm minimal unicode"
+
+              PORTDIR="/usr/portage"
+              PORTDIR_OVERLAY="/usr/portage"
+
+              PYTHON_TARGETS="python3_3"
+        
+        %br
+        %p
+          Now mount, chroot and sync portage tree
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mount -t proc none proc/
+              sudo mount -o bind /sys sys/
+              sudo mount -o bind /dev dev/
+              sudo mount -o bind /dev/pts/ dev/pts/
+              sudo cp /etc/resolv.conf etc/
+              sudo chroot . /bin/bash
+              
+              env-update
+              emerge --sync
+              ln -s /usr/portage/profiles/default/linux/arm/ /etc/make.profile
+        
+        %p
+          Build usual software. This process will be slow (especially configure)
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v baselayout
+              source /etc/profile
+              emerge -v gawk
+              emerge -v gzip
+              USE="-berkdb" emerge -v perl
+              USE="internal-glib" emerge -v pkgconfig
+              
+              emerge -v openrc
+              env-update && source /etc/profile
+              locale-gen
+              
+              emerge -v shadow
+              emerge -vuDN --with-bdeps=y world
+              
+              emerge -v gdb cmake
+        
+        %br
+        %p
+          You can use this environment to debug software for future armv8 processors.
+        %ol
+          %li
+            :markdown
+              Change **CFLAGS** to [appropriate](http://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html).
+          %li
+            :markdown
+              Change **CHOST** to [armv8-hardfloat-linux-gnueabi](https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable).
+          %li
+            %p
+              Build & debug.
+        
+        %br
+        %p Yay!
+        = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }

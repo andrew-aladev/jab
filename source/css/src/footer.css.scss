@@ -11,33 +11,38 @@
     border-top : 1px solid #bbb;
     
     .left {
-      width           : 250px;
       float           : left;
       margin          : 0;
       padding         : 0;
       list-style-type : none;
       
       .logo {
-        display        : inline-block;
-        vertical-align : top;
-        
-        margin     : 4px 0 0 2px;
-        width      : footer-sprite-width(bear);
-        height     : footer-sprite-height(bear);
+        float  : left;
+        margin : 4px 0 0 2px;
+        width  : footer-sprite-width(bear);
+        height : footer-sprite-height(bear);
         @include footer-sprite(bear);
       }
       .copyright {
-        display        : inline-block;
-        vertical-align : top;
-        
         height      : 100%;
-        margin-left : 7px;
-        line-height : 105px;
+        margin      : 1.4em 0 0 95px;
+        line-height : 1.5em;
+        
+        p {
+          margin    : 0;
+          font-size : 0.8em;
+          color     : #555;
+          
+          a {
+            color           : #555;
+            text-decoration : underline;
+          }
+        }
       }
     }
     
     .right {
-      margin          : 0 0 0 250px;
+      margin          : 0 0 0 280px;
       padding         : 0;
       text-align      : right;
       list-style-type : none;

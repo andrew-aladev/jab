@@ -1,0 +1,18 @@
+- content_for :title, "Contact page"
+- content_for :description, "Contact Andrew Aladjev (puchuu)."
+- content_for :keywords, "contact"
+- content_for :content do
+  %ul.content
+    %li
+      .contact_info.clearfix
+        = partial "partials/utils/picture", :locals => { :src => "puchuu.jpg" }
+        %ul.info
+          %li
+            %p
+              My name is Andrew Aladjev,
+          %li
+            :markdown
+              I am working in [HiQo solutions](http://hiqo-solutions.com/) as frontend developer.
+          %li
+            :markdown
+              You can contact me via [aladjev.andrew@gmail.com](mailto:aladjev.andrew@gmail.com) or [admin@puchuu.com](mailto:admin@puchuu.com).

@@ -63,10 +63,16 @@
       }
       ul, ol {
         margin : 0.5em 0;
+        
+        p {
+          text-indent : 0;
+        }
       }
       strong {
         font-weight : bold;
       }
     }
   }
+  
+  @import "contact";
 }

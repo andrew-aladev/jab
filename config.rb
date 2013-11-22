@@ -65,6 +65,7 @@ end
 
 activate :syntax
 set :markdown_engine, :redcarpet
+set :markdown, :fenced_code_blocks => true, :smartypants => true
 
 set :css_dir,    "css"
 set :js_dir,     "js"
@@ -89,7 +90,7 @@ configure :build do
   activate :minify_javascript
   set :js_compressor, ::Closure::Compiler.new
 
-  activate :minify_html
+  # activate :minify_html
 
   activate :imageoptim do |options|
     options.verbose = true
