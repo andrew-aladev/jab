@@ -1,6 +1,8 @@
 - content_for :title, "ARM chroot"
 - content_for :description, "How to create full featured arm chroot environment in gentoo."
 - content_for :keywords, "arm, armv8, armv8-a, gcc, gdb, toolchain, stage3, qemu, cflags, chost"
+- content_for :script do
+  = javascript_include_tag "//connect.facebook.net/en_US/all.js#xfbml=1&appId=259424114218414"
 - content_for :content do
   %ul.content
     %li
@@ -181,7 +183,7 @@
               FEATURES="noman nodoc noinfo"
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
-              USE="arm minimal unicode"
+              USE="arm unicode"
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
@@ -216,19 +218,23 @@
         = preserve do
           - code("shell") do
             :plain
-              emerge -v baselayout
-
+              emerge -v1 baselayout
               source /etc/profile
-              emerge -v gawk
-              emerge -v gzip
-              USE="-berkdb" emerge -v perl
-              USE="internal-glib" emerge -v pkgconfig
               
-              emerge -v openrc
-              env-update && source /etc/profile
+              emerge -v1 gawk
+              emerge -v1 gzip
+              USE="-berkdb" emerge -v1 perl
+              emerge -v1 diffutils
+              USE="internal-glib" emerge -v1 pkgconfig
+              emerge -v1 net-tools
+              emerge -v1 openrc
+              
               locale-gen
               
-              emerge -v shadow
+              emerge -v1 shadow
+              emerge -v1 sys-apps/texinfo
+              
+              echo "" > /var/lib/portage/world
               emerge -vuDN --with-bdeps=y world
         
         %br
@@ -248,3 +254,8 @@
         %br
         %p Yay!
         = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
+      
+        %br
+        %p Please feel free to comment this topic.
+        #fb-root
+        .fb-comments(data-href="https://www.puchuu.com/posts/arm-chroot.html" data-numposts="10" data-colorscheme="light")
