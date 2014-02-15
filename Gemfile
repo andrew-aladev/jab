@@ -1,17 +1,16 @@
 source "https://rubygems.org/"
 
-# this is better to install these packages in gentoo global via emerge
 gem "bundler",      "~> 1.3.5"
-gem "rb-inotify",   "~> 0.9.2"
+gem "rb-inotify",   "~> 0.9.3"
 gem "eventmachine", "~> 1.0.3"
 
-gem "middleman",             "~> 3.2.0"
-gem "middleman-deploy",      "~> 0.1.3"
+gem "middleman",             "~> 3.2.2"
+gem "middleman-deploy",      "~> 0.1.4"
 gem "closure-compiler",      "~> 1.1.10"
 gem "yui-compressor",        "~> 0.12.0"
 gem "middleman-minify-html", "~> 3.1.1"
-gem "middleman-syntax",      "~> 1.2.1"
-gem "redcarpet",             "~> 3.0.0"
+gem "middleman-syntax",      "~> 2.0.0"
+gem "redcarpet",             "~> 3.1.0"
 
 # this should be installed in gentoo global via emerge
 # media-gfx/pngcrush
@@ -21,4 +20,4 @@ gem "redcarpet",             "~> 3.0.0"
 # media-gfx/gifsicle
 # app-arch/advancecomp
 
-gem "middleman-imageoptim", "~> 0.1.3"
+gem "middleman-imageoptim", "~> 0.1.4"

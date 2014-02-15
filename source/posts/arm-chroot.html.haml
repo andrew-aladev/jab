@@ -43,6 +43,7 @@
               ACCEPT_KEYWORDS="arm ~arm"
               USE="${ARCH} minimal -pam unicode"
               CFLAGS="-O2 -pipe"
+              MAKEOPTS="-j9"
               FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
               PYTHON_TARGETS="python3_3"
         
@@ -146,17 +147,22 @@
           - code("shell") do
             :plain
               sudo rm -r tmp/portage/*
-              sudo rm etc/make.profile
-              sudo rm etc/portage/env/dev-lang/python
-              sudo rm etc/portage/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch
-              sudo rm etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
+              sudo rm etc/portage/make.profile
+              sudo rm -r etc/portage/env
+              sudo rm -r etc/portage/patches
               
               sudo mkdir -p {proc,dev,sys,root}
               sudo mkdir -p usr/portage/
               
-              echo 'LANG="en_US.UTF-8" | sudo tee -a etc/env.d/02locale > /dev/null
+              echo 'root:x:0:0:root:/root:/bin/bash
+              portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a etc/passwd > /dev/null
+              echo 'root:x:0:root
+              portage::250:portage' | sudo tee -a etc/group > /dev/null
+              
+              echo 'LANG="en_US.UTF-8"
+              LC_COLLATE="C"' | sudo tee -a etc/env.d/02locale > /dev/null
+              
               echo 'en_US.UTF-8 UTF-8' | sudo tee -a etc/locale.gen > /dev/null
-        
         %p
           :markdown
             Set **etc/portage/make.conf** to something like.
@@ -189,6 +195,9 @@
         = preserve do
           - code("shell") do
             :plain
+              sudo wget "http://mirror.yandex.ru/gentoo-distfiles/snapshots/portage-latest.tar.bz2" -O /tmp/portage-latest.tar.bz2
+              sudo tar xvjf /tmp/portage-latest.tar.bz2 -C usr/
+              
               sudo mount -t proc none proc/
               sudo mount -o bind /sys sys/
               sudo mount -o bind /dev dev/
@@ -196,18 +205,19 @@
               sudo cp /etc/resolv.conf etc/
               sudo chroot . /bin/bash
               
-              env-update
-              emerge --sync
-              ln -s /usr/portage/profiles/default/linux/arm/ /etc/make.profile
               chmod a+w /tmp
+              chmod a+w /var/tmp
+              env-update
+              ln -s /usr/portage/profiles/default/linux/arm/ /etc/portage/make.profile
         
         %p
-          Build usual software. This process will be slow (especially configure)
+          Build usual minimal software. This process will be slow (especially configure)
         
         = preserve do
           - code("shell") do
             :plain
               emerge -v baselayout
+
               source /etc/profile
               emerge -v gawk
               emerge -v gzip
@@ -220,8 +230,6 @@
               
               emerge -v shadow
               emerge -vuDN --with-bdeps=y world
-              
-              emerge -v gdb cmake
         
         %br
         %p
