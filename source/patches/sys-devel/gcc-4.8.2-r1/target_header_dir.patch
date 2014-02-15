@@ -1,0 +1,54 @@
+diff --git a/gcc/configure b/gcc/configure
+index 466ef2f..e8abfa2 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -26726,21 +26726,7 @@ _ACEOF
+ 
+ fi
+ 
+-if test x$host != x$target || test "x$TARGET_SYSTEM_ROOT" != x; then
+-  if test "x$with_headers" != x; then
+-    target_header_dir=$with_headers
+-  elif test "x$with_sysroot" = x; then
+-    target_header_dir="${test_exec_prefix}/${target_noncanonical}/sys-include"
+-  elif test "x$with_build_sysroot" != "x"; then
+-    target_header_dir="${with_build_sysroot}${native_system_header_dir}"
+-  elif test "x$with_sysroot" = xyes; then
+-    target_header_dir="${test_exec_prefix}/${target_noncanonical}/sys-root${native_system_header_dir}"
+-  else
+-    target_header_dir="${with_sysroot}${native_system_header_dir}"
+-  fi
+-else
+-  target_header_dir=${native_system_header_dir}
+-fi
++target_header_dir="/usr/${target_noncanonical}${native_system_header_dir}";
+ 
+ # Test for stack protector support in target C library.
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking __stack_chk_fail in target C library" >&5
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 36d1795..625106c 100755
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -4700,21 +4700,7 @@ if test x$with_sysroot = x && test x$host = x$target \
+ [Define to PREFIX/include if cpp should also search that directory.])
+ fi
+ 
+-if test x$host != x$target || test "x$TARGET_SYSTEM_ROOT" != x; then
+-  if test "x$with_headers" != x; then
+-    target_header_dir=$with_headers
+-  elif test "x$with_sysroot" = x; then
+-    target_header_dir="${test_exec_prefix}/${target_noncanonical}/sys-include"
+-  elif test "x$with_build_sysroot" != "x"; then
+-    target_header_dir="${with_build_sysroot}${native_system_header_dir}"
+-  elif test "x$with_sysroot" = xyes; then
+-    target_header_dir="${test_exec_prefix}/${target_noncanonical}/sys-root${native_system_header_dir}"
+-  else
+-    target_header_dir="${with_sysroot}${native_system_header_dir}"
+-  fi
+-else
+-  target_header_dir=${native_system_header_dir}
+-fi
++target_header_dir="/usr/${target_noncanonical}${native_system_header_dir}";
+ 
+ # Test for stack protector support in target C library.
+ AC_CACHE_CHECK(__stack_chk_fail in target C library,

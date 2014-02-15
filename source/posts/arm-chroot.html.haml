@@ -8,7 +8,7 @@
         %h1
           How to create full featured arm chroot environment in gentoo
         %p.date
-          17.11.13
+          15.02.14
       .topic
         %p
           :markdown
@@ -28,19 +28,20 @@
           - code("shell") do
             :plain
               sudo emerge -v sys-devel/crossdev
-              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2 --l 2.18 --k 3.12 --b 2.23.2
+              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2-r1 --l 2.19 --k 3.13 --b 2.24-r2
               
-              sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
-              sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/make.profile
+              sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
         
         %p
           :markdown
-            Set the following configuration to **/usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf**
+            Set the following configuration lines to **/usr/arm-hardfloat-linux-gnueabi/etc/portage/make.conf**
         
         = preserve do
           - code("shell") do
             :plain
-              USE="${ARCH} minimal unicode"
+              ACCEPT_KEYWORDS="arm ~arm"
+              USE="${ARCH} minimal -pam unicode"
               CFLAGS="-O2 -pipe"
               FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
               PYTHON_TARGETS="python3_3"
@@ -52,20 +53,22 @@
           - code("shell") do
             :plain
               cd /usr/arm-hardfloat-linux-gnueabi
+              sudo mkdir -p etc/portage/package.unmask
+              echo '=sys-devel/gcc-4.8.2-r1' | sudo tee -a etc/portage/package.unmask/sys-devel > /dev/null
               sudo mkdir -p etc/portage/package.keywords
-              echo "=sys-libs/glibc-2.18 **" | sudo tee etc/portage/package.keywords/sys-libs > /dev/null
-              sudo mkdir -p etc/portage/package.use
-              echo ">=sys-devel/gcc-0 lto" | sudo tee etc/portage/package.use/sys-devel > /dev/null
-              sudo mkdir -p etc/portage/env/sys-libs
-              echo 'FEATURES="splitdebug"' | sudo tee etc/portage/env/sys-libs/glibc > /dev/null
-              sudo mkdir -p etc/portage/patches/sys-apps/sandbox-2.6
-              sudo wget "https://www.puchuu.com/patches/sys-apps/sandbox-2.6/glibc-2.18.patch" -O etc/portage/patches/sys-apps/sandbox-2.6/glibc-2.18.patch
+              echo '=sys-devel/gcc-4.8.2-r1 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
+              echo '=sys-libs/glibc-2.19 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
               sudo mkdir -p etc/portage/env/dev-lang
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               
-              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/gcc sys-devel/binutils bash portage \
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/binutils bash portage \
                 findutils wget app-arch/tar sys-devel/make grep patch
+              
+              sudo mkdir -p etc/portage/patches/sys-devel/gcc-4.8.2-r1
+              sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O etc/portage/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch
+              
+              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-devel/gcc
         
         %p
           :markdown
@@ -95,7 +98,7 @@
         = preserve do
           - code("shell") do
             :plain
-              sudo mkdir -p ~/workspace
+              mkdir -p ~/workspace
               sudo cp -R /usr/arm-hardfloat-linux-gnueabi ~/workspace/
               cd ~/workspace/arm-hardfloat-linux-gnueabi
         
@@ -145,19 +148,13 @@
               sudo rm -r tmp/portage/*
               sudo rm etc/make.profile
               sudo rm etc/portage/env/dev-lang/python
+              sudo rm etc/portage/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch
               sudo rm etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
               
-              sudo mkdir {proc,dev,sys,root}
-              sudo mkdir usr/portage/
+              sudo mkdir -p {proc,dev,sys,root}
+              sudo mkdir -p usr/portage/
               
-              echo 'root:x:0:0:root:/root:/bin/bash
-              portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a etc/passwd > /dev/null
-              echo 'root:x:0:root
-              portage::250:portage' | sudo tee -a etc/group > /dev/null
-              
-              echo 'LANG="en_US.UTF-8"
-              LC_COLLATE="C"' | sudo tee -a etc/env.d/02locale > /dev/null
-              
+              echo 'LANG="en_US.UTF-8" | sudo tee -a etc/env.d/02locale > /dev/null
               echo 'en_US.UTF-8 UTF-8' | sudo tee -a etc/locale.gen > /dev/null
         
         %p
