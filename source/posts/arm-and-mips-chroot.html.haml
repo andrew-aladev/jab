@@ -1,4 +1,4 @@
-- content_for :title, "ARM and MIPS chroot"
+- content_for :title, "arm and mips chroot"
 - content_for :description, "How to create full featured arm and mips chroot environment in gentoo."
 - content_for :keywords, "arm, mips, gcc, gdb, toolchain, stage3, qemu, cflags, chost"
 - content_for :script do
@@ -180,10 +180,11 @@
               CXXFLAGS="${CFLAGS}"
               MAKEOPTS="-j9"
 
-              FEATURES="noman nodoc noinfo"
+              FEATURES=""
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
-              USE="arm unicode"
+              
+              USE=""
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
@@ -210,7 +211,10 @@
               chmod a+w /tmp
               chmod a+w /var/tmp
               env-update
-              ln -s /usr/portage/profiles/default/linux/arm/ /etc/portage/make.profile
+              ln -s /usr/portage/profiles/default/linux/arm/13.0 /etc/portage/make.profile
+              
+              rm /usr/portage/metadata/timestamp.chk
+              emerge --sync
         
         %p
           Build usual minimal software. This process will be slow (especially configure)
@@ -218,24 +222,29 @@
         = preserve do
           - code("shell") do
             :plain
-              emerge -v1 baselayout
+              echo '' > /var/lib/portage/world
+              
+              mkdir -p /etc/portage/package.use/
+              echo '>=sys-apps/diffutils-0 -nls' >> /etc/portage/package.use/sys-apps
+              emerge -v diffutils
+              
+              emerge -v baselayout-prefix
               source /etc/profile
               
-              emerge -v1 gawk
-              emerge -v1 gzip
-              USE="-berkdb" emerge -v1 perl
-              emerge -v1 diffutils
-              USE="internal-glib" emerge -v1 pkgconfig
-              emerge -v1 net-tools
-              emerge -v1 openrc
-              
+              emerge -v gzip
               locale-gen
               
-              emerge -v1 shadow
-              emerge -v1 sys-apps/texinfo
+              echo '>=sys-apps/gawk-0 -nls readline' >> /etc/portage/package.use/sys-apps
+              emerge -v gawk
               
-              echo "" > /var/lib/portage/world
-              emerge -vuDN --with-bdeps=y world
+              echo '>=sys-apps/net-tools-0 -nls' >> /etc/portage/package.use/sys-apps
+              emerge -v net-tools
+              
+              echo '>=dev-lang/perl-0 -berkdb -gdbm' >> /etc/portage/package.use/dev-lang
+              emerge -v perl
+              
+              echo '>=sys-devel/gcc-0 cxx fortran -nls nptl openmp' >> /etc/portage/package.use/sys-devel
+              emerge -v gcc
         
         %br
         %p Yay!
