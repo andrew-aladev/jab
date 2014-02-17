@@ -226,8 +226,10 @@
               
               mkdir -p /etc/portage/package.use/
               echo '>=sys-apps/diffutils-0 -nls' >> /etc/portage/package.use/sys-apps
-              emerge -v diffutils
+              emerge -v1 diffutils
               
+              mkdir -p /etc/portage/package.keywords/
+              echo '=sys-apps/baselayout-prefix-2.2-r3 **' >> /etc/portage/package.keywords/sys-apps
               emerge -v baselayout-prefix
               source /etc/profile
               
@@ -241,10 +243,31 @@
               emerge -v net-tools
               
               echo '>=dev-lang/perl-0 -berkdb -gdbm' >> /etc/portage/package.use/dev-lang
-              emerge -v perl
+              emerge -v1 perl
+              
+              echo '>=sys-devel/flex-0 -nls' >> /etc/portage/package.use/sys-devel
+              echo '>=sys-devel/bison-0 -nls' >> /etc/portage/package.use/sys-devel
+              emerge -v1 gnuconfig m4 flex bison
+        
+        %p
+          :markdown
+            You can enable lto. Set the following lines to **etc/portage/make.conf**
+
+        = preserve do
+          - code("shell") do
+            :plain
+              CFLAGS="-O2 -pipe -flto -fuse-linker-plugin"
+              LDFLAGS="-flto -fuse-linker-plugin"
+                
+        %p
+          Continue building minimal software.
+
+        = preserve do
+          - code("shell") do
+            :plain
               
               echo '>=sys-devel/gcc-0 cxx fortran -nls nptl openmp' >> /etc/portage/package.use/sys-devel
-              emerge -v gcc
+              emerge -v1 gcc
         
         %br
         %p Yay!
