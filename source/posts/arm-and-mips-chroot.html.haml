@@ -286,7 +286,7 @@
               emerge -v1 cracklib
 
               mkdir -p /etc/portage/package.env/
-              echo 'dev-libs/elfutils no-lto' >> /etc/portage/package.env/dev-libs
+              echo 'dev-libs/elfutils no-lto.conf' >> /etc/portage/package.env/dev-libs
               echo 'dev-libs/elfutils -nls' >> /etc/portage/package.use/dev-libs
               emerge -v1 elfutils
         
