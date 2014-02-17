@@ -118,7 +118,7 @@
               echo 'QEMU_USER_TARGETS="arm"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
               
               sudo mkdir -p /etc/portage/package.env/
-              echo '>=app-emulation/qemu-user-0 qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
+              echo 'app-emulation/qemu-user qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
               
               sudo mkdir -p /etc/portage/patches/app-emulation/qemu-user-9999/
               sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch" -O /etc/portage/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch
@@ -225,7 +225,7 @@
               echo '' > /var/lib/portage/world
               
               mkdir -p /etc/portage/package.use/
-              echo '>=sys-apps/diffutils-0 -nls' >> /etc/portage/package.use/sys-apps
+              echo 'sys-apps/diffutils -nls' >> /etc/portage/package.use/sys-apps
               emerge -v1 diffutils
               
               mkdir -p /etc/portage/package.keywords/
@@ -236,17 +236,19 @@
               emerge -v gzip
               locale-gen
               
-              echo '>=sys-apps/gawk-0 -nls readline' >> /etc/portage/package.use/sys-apps
+              echo 'sys-apps/gawk -nls readline' >> /etc/portage/package.use/sys-apps
               emerge -v gawk
               
-              echo '>=sys-apps/net-tools-0 -nls' >> /etc/portage/package.use/sys-apps
+              echo 'sys-apps/net-tools -nls' >> /etc/portage/package.use/sys-apps
               emerge -v net-tools
               
-              echo '>=dev-lang/perl-0 -berkdb -gdbm' >> /etc/portage/package.use/dev-lang
+              echo 'dev-lang/perl -berkdb -gdbm' >> /etc/portage/package.use/dev-lang
               emerge -v1 perl
+
+              USE="internal-glib" emerge -v1 pkgconfig
               
-              echo '>=sys-devel/flex-0 -nls' >> /etc/portage/package.use/sys-devel
-              echo '>=sys-devel/bison-0 -nls' >> /etc/portage/package.use/sys-devel
+              echo 'sys-devel/flex -nls' >> /etc/portage/package.use/sys-devel
+              echo 'sys-devel/bison -nls' >> /etc/portage/package.use/sys-devel
               emerge -v1 gnuconfig m4 flex bison
         
         %p
@@ -258,15 +260,35 @@
             :plain
               CFLAGS="-O2 -pipe -flto -fuse-linker-plugin"
               LDFLAGS="-flto -fuse-linker-plugin"
-                
+
+        %p
+          Disable lto in several packages
+
+        = preserve do
+          - code("shell") do
+            :plain
+              mkdir -p /etc/portage/env/
+              echo 'CFLAGS="${CFLAGS} -fno-lto -fno-use-linker-plugin"
+              LDFLAGS="${LDFLAGS} -fno-lto -fno-use-linker-plugin"' >> /etc/portage/env/no-lto.conf
+
         %p
           Continue building minimal software.
 
         = preserve do
           - code("shell") do
             :plain
-              echo '>=sys-devel/gcc-0 cxx fortran -nls nptl openmp' >> /etc/portage/package.use/sys-devel
+              echo 'sys-devel/gcc -nls' >> /etc/portage/package.use/sys-devel
               emerge -v1 gcc
+
+              emerge -v1 pkgconfig
+
+              echo 'sys-libs/cracklib -nls' >> /etc/portage/package.use/sys-libs
+              emerge -v1 cracklib
+
+              mkdir -p /etc/portage/package.env/
+              echo 'dev-libs/elfutils no-lto' >> /etc/portage/package.env/dev-libs
+              echo 'dev-libs/elfutils -nls' >> /etc/portage/package.use/dev-libs
+              emerge -v1 elfutils
         
         %br
         %p Yay!
