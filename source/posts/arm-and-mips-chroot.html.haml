@@ -33,7 +33,7 @@
               sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2-r1 --l 2.19 --k 3.13 --b 2.24-r2
               
               sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
-              sudo ln -s /usr/portage/profiles/default/linux/arm/ /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/arm/13.0/ /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
         
         %p
           :markdown
@@ -48,6 +48,7 @@
               MAKEOPTS="-j9"
               FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
               PYTHON_TARGETS="python3_3"
+              PYTHON_SINGLE_TARGET="python3_3"
         
         %p
           Than you need to build minimal toolchain
@@ -65,13 +66,13 @@
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a etc/portage/env/dev-lang/python > /dev/null
               
-              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-kernel/linux-headers sys-devel/binutils bash portage \
+              sudo arm-hardfloat-linux-gnueabi-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash portage \
                 findutils wget app-arch/tar sys-devel/make grep patch
               
               sudo mkdir -p etc/portage/patches/sys-devel/gcc-4.8.2-r1
               sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O etc/portage/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch
               
-              sudo arm-hardfloat-linux-gnueabi-emerge -v sys-devel/gcc
+              sudo arm-hardfloat-linux-gnueabi-emerge -v1 sys-devel/gcc
         
         %p
           :markdown
@@ -93,7 +94,7 @@
               sudo ebuild /usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild manifest
               sudo mkdir -p etc/portage/patches/sys-apps/gawk-4.1.0
               sudo wget "https://www.puchuu.com/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch" -O etc/portage/patches/sys-apps/gawk-4.1.0/no-ext-and-tests.patch
-              sudo arm-hardfloat-linux-gnueabi-emerge -v gawk
+              sudo arm-hardfloat-linux-gnueabi-emerge -v1 gawk
         
         %p
           You can copy toolchain to your workspace now and start prepairing chroot.
@@ -184,12 +185,13 @@
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
               
-              USE=""
+              USE="-nls -pam -berkdb -gdbm -cramfs"
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
 
               PYTHON_TARGETS="python3_3"
+              PYTHON_SINGLE_TARGET="python3_3"
         
         %br
         %p
@@ -224,8 +226,6 @@
             :plain
               echo '' > /var/lib/portage/world
               
-              mkdir -p /etc/portage/package.use/
-              echo 'sys-apps/diffutils -nls' >> /etc/portage/package.use/sys-apps
               emerge -v1 diffutils
               
               mkdir -p /etc/portage/package.keywords/
@@ -233,23 +233,14 @@
               emerge -v baselayout-prefix
               source /etc/profile
               
-              emerge -v gzip
+              emerge -v1 gzip
               locale-gen
               
-              echo 'sys-apps/gawk -nls readline' >> /etc/portage/package.use/sys-apps
-              emerge -v gawk
-              
-              echo 'sys-apps/net-tools -nls' >> /etc/portage/package.use/sys-apps
-              emerge -v net-tools
-              
-              echo 'dev-lang/perl -berkdb -gdbm' >> /etc/portage/package.use/dev-lang
+              emerge -v1 gawk
+              emerge -v1 net-tools
               emerge -v1 perl
 
               USE="internal-glib" emerge -v1 pkgconfig
-              
-              echo 'sys-devel/flex -nls' >> /etc/portage/package.use/sys-devel
-              echo 'sys-devel/bison -nls' >> /etc/portage/package.use/sys-devel
-              emerge -v1 gnuconfig m4 flex bison
         
         %p
           :markdown
@@ -269,6 +260,7 @@
             :plain
               mkdir -p /etc/portage/env/
               echo 'CFLAGS="${CFLAGS} -fno-lto -fno-use-linker-plugin"
+              CXXFLAGS="${CXXFLAGS} -fno-lto -fno-use-linker-plugin"
               LDFLAGS="${LDFLAGS} -fno-lto -fno-use-linker-plugin"' >> /etc/portage/env/no-lto.conf
 
         %p
@@ -277,19 +269,18 @@
         = preserve do
           - code("shell") do
             :plain
-              echo 'sys-devel/gcc -nls' >> /etc/portage/package.use/sys-devel
+              mkdir -p /etc/portage/package.use/
+              echo 'sys-devel/gcc cxx fortran openmp' >> /etc/portage/package.use/sys-devel
               emerge -v1 gcc
-
               emerge -v1 pkgconfig
-
-              echo 'sys-libs/cracklib -nls' >> /etc/portage/package.use/sys-libs
-              emerge -v1 cracklib
 
               mkdir -p /etc/portage/package.env/
               echo 'dev-libs/elfutils no-lto.conf' >> /etc/portage/package.env/dev-libs
-              echo 'dev-libs/elfutils -nls' >> /etc/portage/package.use/dev-libs
               emerge -v1 elfutils
-        
+
+              emerge -v1 glibc
+              emerge -v1 binutils linux-headers
+
         %br
         %p Yay!
         = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
