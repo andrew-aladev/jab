@@ -272,14 +272,15 @@
               mkdir -p /etc/portage/package.use/
               echo 'sys-devel/gcc cxx fortran openmp' >> /etc/portage/package.use/sys-devel
               emerge -v1 gcc
-              emerge -v1 pkgconfig
 
               mkdir -p /etc/portage/package.env/
               echo 'dev-libs/elfutils no-lto.conf' >> /etc/portage/package.env/dev-libs
-              emerge -v1 elfutils
+              emerge -v1 pkgconfig
 
               emerge -v1 glibc
-              emerge -v1 binutils linux-headers
+              emerge -v1 linux-headers
+
+              emerge -v1 binutils
 
         %br
         %p Yay!
