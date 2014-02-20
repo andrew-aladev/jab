@@ -30,7 +30,7 @@
           - code("shell") do
             :plain
               sudo emerge -v sys-devel/crossdev
-              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2-r1 --l 2.19 --k 3.13 --b 2.24-r2
+              sudo crossdev -t arm-hardfloat-linux-gnueabi --g 4.8.2-r1 --l 2.19 --k 3.13 --b 2.23.2
               
               sudo rm /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
               sudo ln -s /usr/portage/profiles/default/linux/arm/13.0/ /usr/arm-hardfloat-linux-gnueabi/etc/portage/make.profile
@@ -185,7 +185,7 @@
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
               
-              USE="-nls -pam -berkdb -gdbm -cramfs"
+              USE="-acl -nls -pam -berkdb -gdbm -cramfs"
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
@@ -230,7 +230,7 @@
               
               mkdir -p /etc/portage/package.keywords/
               echo '=sys-apps/baselayout-prefix-2.2-r3 **' >> /etc/portage/package.keywords/sys-apps
-              emerge -v baselayout-prefix
+              emerge -v1 baselayout-prefix
               source /etc/profile
               
               emerge -v1 gzip
@@ -280,7 +280,16 @@
               emerge -v1 glibc
               emerge -v1 linux-headers
 
+              mkdir -p /etc/portage/package.mask
+              echo '>=sys-devel/binutils-2.24' >> /etc/portage/package.mask/sys-devel
               emerge -v1 binutils
+
+              emerge -C baselayout-prefix
+
+              echo 'sys-apps/findutils no-lto.conf
+              sys-apps/sysvinit no-lto.conf
+              sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              emerge -ve world --exclude="gcc glibc binutils linux-headers"
 
         %br
         %p Yay!
