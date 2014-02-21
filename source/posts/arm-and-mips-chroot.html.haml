@@ -185,7 +185,7 @@
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
               
-              USE="-acl -nls -pam -berkdb -gdbm -cramfs"
+              USE="-acl -nls -pam -berkdb"
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
@@ -288,8 +288,12 @@
 
               echo 'sys-apps/findutils no-lto.conf
               sys-apps/sysvinit no-lto.conf
-              sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              sys-apps/coreutils no-lto.conf
+              sys-apps/shadow no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -ve world --exclude="gcc glibc binutils linux-headers"
+
+        %p
+          You can delete msgmerge binary if you have problems with it ([qemu bug](https://bugs.launchpad.net/qemu/+bug/668799))
 
         %br
         %p Yay!
