@@ -59,6 +59,8 @@
               cd /usr/arm-hardfloat-linux-gnueabi
               sudo mkdir -p etc/portage/package.unmask
               echo '=sys-devel/gcc-4.8.2-r1' | sudo tee -a etc/portage/package.unmask/sys-devel > /dev/null
+              sudo mkdir -p etc/portage/package.mask
+              echo '>=sys-devel/binutils-2.24' | sudo tee -a etc/portage/package.mask/sys-devel > /dev/null
               sudo mkdir -p etc/portage/package.keywords
               echo '=sys-devel/gcc-4.8.2-r1 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
               echo '=sys-libs/glibc-2.19 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
@@ -238,8 +240,7 @@
               
               emerge -v1 gawk
               emerge -v1 net-tools
-              emerge -v1 perl
-
+              USE="-berkdb" emerge -v1 perl
               USE="internal-glib" emerge -v1 pkgconfig
         
         %p
@@ -269,8 +270,6 @@
         = preserve do
           - code("shell") do
             :plain
-              mkdir -p /etc/portage/package.use/
-              echo 'sys-devel/gcc cxx fortran openmp' >> /etc/portage/package.use/sys-devel
               emerge -v1 gcc
 
               mkdir -p /etc/portage/package.env/
@@ -279,19 +278,14 @@
 
               emerge -v1 glibc
               emerge -v1 linux-headers
-
-              mkdir -p /etc/portage/package.mask
-              echo '>=sys-devel/binutils-2.24' >> /etc/portage/package.mask/sys-devel
               emerge -v1 binutils
 
               emerge -C baselayout-prefix
+              echo 'sys-apps/sysvinit no-lto.conf' >> /etc/portage/package.env/sys-apps
+              emerge -v1 openrc
 
-              echo 'sys-apps/findutils no-lto.conf
-              sys-apps/sysvinit no-lto.conf
-              sys-apps/coreutils no-lto.conf
-              sys-apps/shadow no-lto.conf' >> /etc/portage/package.env/sys-apps
-              emerge -ve world --exclude="gcc glibc binutils linux-headers"
-
+              echo 'dev-lang/perl no-lto.conf' >> /etc/portage/package.env/dev-lang
+              emerge -v1 perl
         %p
           You can delete msgmerge binary if you have problems with it ([qemu bug](https://bugs.launchpad.net/qemu/+bug/668799))
 
