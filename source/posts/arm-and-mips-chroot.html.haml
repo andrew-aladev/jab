@@ -299,6 +299,17 @@
               sys-apps/findutils no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -vuDN --with-bdeps=y world
 
+        %p
+          :markdown
+            Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**.
+
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v eix
+              eix-update
+              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
+
         %br
         %p Yay!
         = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
