@@ -43,7 +43,7 @@
           - code("shell") do
             :plain
               ACCEPT_KEYWORDS="arm ~arm"
-              USE="${ARCH} minimal -pam unicode"
+              USE="${ARCH} minimal -pam -nls"
               CFLAGS="-O2 -pipe"
               MAKEOPTS="-j9"
               FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
@@ -187,7 +187,7 @@
               ACCEPT_KEYWORDS="~arm"
               LINGUAS="en"
               
-              USE="-pam"
+              USE="-pam -nls"
 
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
@@ -286,8 +286,18 @@
 
               echo 'dev-lang/perl no-lto.conf' >> /etc/portage/package.env/dev-lang
               emerge -v1 perl
-        %p
-          You can delete msgmerge binary if you have problems with it ([qemu bug](https://bugs.launchpad.net/qemu/+bug/668799))
+
+              echo 'sys-apps/shadow no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'net-misc/openssh no-lto.conf' >> /etc/portage/package.env/net-misc
+              emerge -v1 openssh
+
+              echo 'sys-fs/udev' >> /etc/portage/package.mask/sys-fs
+              emerge -v eudev
+
+              echo 'sys-apps/gawk no-lto.conf
+              sys-fs/e2fsprogs no-lto.conf
+              sys-apps/findutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              emerge -vuDN --with-bdeps=y world
 
         %br
         %p Yay!
