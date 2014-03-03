@@ -295,8 +295,9 @@
               emerge -v eudev
 
               echo 'sys-apps/gawk no-lto.conf
-              sys-fs/e2fsprogs no-lto.conf
-              sys-apps/findutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              sys-apps/findutils no-lto.conf
+              sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
               emerge -vuDN --with-bdeps=y world
 
         %p
