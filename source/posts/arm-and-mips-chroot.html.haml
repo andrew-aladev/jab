@@ -295,6 +295,7 @@
               emerge -v eudev
 
               echo 'sys-apps/gawk no-lto.conf
+              sys-apps/sandbox no-lto.conf
               sys-apps/findutils no-lto.conf
               sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
               echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
@@ -303,6 +304,15 @@
         %p
           :markdown
             Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**.
+
+        %p
+          :markdown
+            If you have problems with [msgmerge](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=706237), you can simply remove it's binary, because you dont have **nls** use flag.
+
+        = preserve do
+          - code("shell") do
+            :plain
+              mv /usr/bin/msgmerge /usr/bin/msgmerge.bak
 
         = preserve do
           - code("shell") do
