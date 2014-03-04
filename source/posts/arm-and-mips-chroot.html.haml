@@ -209,6 +209,7 @@
               sudo mount -o bind /sys sys/
               sudo mount -o bind /dev dev/
               sudo mount -o bind /dev/pts/ dev/pts/
+              sudo mount -o bind /dev/shm/ dev/shm/
               sudo cp /etc/resolv.conf etc/
               sudo chroot . /bin/bash
               
@@ -298,6 +299,7 @@
               sys-apps/findutils no-lto.conf
               sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
               echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
+              echo 'dev-lang/python no-lto.conf' >> /etc/portage/package.env/dev-lang
               emerge -vuDN --with-bdeps=y world
 
         %p
