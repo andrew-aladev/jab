@@ -323,6 +323,17 @@
             :plain
               mv /usr/bin/msgmerge /usr/bin/msgmerge.bak
 
+        %p
+          You can make cleanup.
+
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v gentoolkit
+              emerge --depclean
+              rm -rf /var/tmp/portage/*
+              eclean --destructive distfiles
+
         %br
         %p Yay!
         = partial "partials/utils/picture", :locals => { :src => "photos/surprise.jpg" }
