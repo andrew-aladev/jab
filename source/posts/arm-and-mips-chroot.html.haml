@@ -305,6 +305,13 @@
           :markdown
             Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**.
 
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v eix
+              eix-update
+              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
+
         %p
           :markdown
             If you have problems with [msgmerge](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=706237), you can simply remove it's binary, because you dont have **nls** use flag.
@@ -313,13 +320,6 @@
           - code("shell") do
             :plain
               mv /usr/bin/msgmerge /usr/bin/msgmerge.bak
-
-        = preserve do
-          - code("shell") do
-            :plain
-              emerge -v eix
-              eix-update
-              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
 
         %br
         %p Yay!
