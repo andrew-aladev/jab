@@ -61,6 +61,7 @@
               echo '=sys-devel/gcc-4.8.2-r1' | sudo tee -a etc/portage/package.unmask/sys-devel > /dev/null
               sudo mkdir -p etc/portage/package.mask
               echo '>=sys-devel/binutils-2.24' | sudo tee -a etc/portage/package.mask/sys-devel > /dev/null
+              echo '=sys-libs/readline-6.3' | sudo tee -a etc/portage/package.mask/sys-libs
               sudo mkdir -p etc/portage/package.keywords
               echo '=sys-devel/gcc-4.8.2-r1 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
               echo '=sys-libs/glibc-2.19 **' | sudo tee -a etc/portage/package.keywords/sys-libs > /dev/null
