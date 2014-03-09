@@ -283,7 +283,8 @@
               emerge -v1 binutils
 
               emerge -C baselayout-prefix
-              echo 'sys-apps/sysvinit no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-apps/sysvinit no-lto.conf
+              sys-apps/openrc no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -v1 openrc
 
               echo 'dev-lang/perl no-lto.conf' >> /etc/portage/package.env/dev-lang
