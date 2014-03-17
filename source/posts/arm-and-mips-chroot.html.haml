@@ -78,7 +78,7 @@
               
               
               sudo mkdir -p /usr/mips-unknown-linux-gnueabi/etc/portage/package.mask
-              echo '>=sys-devel/binutils-2.23.2' | sudo tee -a /usr/mips-unknown-linux-gnueabi/etc/portage/package.mask/sys-devel > /dev/null
+              echo '>=sys-devel/binutils-2.24' | sudo tee -a /usr/mips-unknown-linux-gnueabi/etc/portage/package.mask/sys-devel > /dev/null
               sudo mkdir -p /usr/mips-unknown-linux-gnueabi/etc/portage/package.unmask
               echo '=sys-devel/gcc-4.8.2-r1' | sudo tee -a /usr/mips-unknown-linux-gnueabi/etc/portage/package.unmask/sys-devel > /dev/null
               sudo mkdir -p /usr/mips-unknown-linux-gnueabi/etc/portage/package.keywords
@@ -389,16 +389,22 @@
               echo 'sys-fs/udev' >> /etc/portage/package.mask/sys-fs
               emerge -v eudev
 
+              echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
               emerge -vuDN --with-bdeps=y world
 
         %p
-          These commands should be added for mips
+          These commands can be added for mips
         
         = preserve do
           - code("shell") do
             :plain
               echo 'sys-apps/tcp-wrappers no-lto.conf' >> /etc/portage/package.env/sys-apps
               echo 'sys-apps/openrc no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-libs/ncurses no-lto.conf' >> /etc/portage/package.env/sys-libs
+              echo 'sys-libs/e2fsprogs-libs no-lto.conf' >> /etc/portage/package.env/sys-libs
+
+              mkdir -p /etc/portage/patches/sys-fs/eudev-1.5.2/
+              sudo wget "https://www.puchuu.com/patches/sys-fs/eudev-1.5.2/fcntl.patch" -O /etc/portage/patches/sys-fs/eudev-1.5.2/fcntl.patch
 
         %p
           :markdown
@@ -410,6 +416,10 @@
               emerge -v eix
               echo 'OVERLAY_CACHE_METHOD=parse' >> /etc/eixrc/00-eixrc
               eix-update
+
+              echo 'sys-apps/findutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-apps/gawk no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
 
         %p

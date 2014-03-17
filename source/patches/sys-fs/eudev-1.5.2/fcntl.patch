@@ -1,0 +1,65 @@
+diff --git a/src/accelerometer/accelerometer.c b/src/accelerometer/accelerometer.c
+index f65631a..9ece0e8 100755
+--- a/src/accelerometer/accelerometer.c
++++ b/src/accelerometer/accelerometer.c
+@@ -57,7 +57,7 @@
+ #include <limits.h>
+ #include <linux/limits.h>
+ #include <linux/input.h>
+-#include <linux/fcntl.h>
++//#include <linux/fcntl.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
+diff --git a/src/ata_id/ata_id.c b/src/ata_id/ata_id.c
+index a25c713..3ac0a68 100755
+--- a/src/ata_id/ata_id.c
++++ b/src/ata_id/ata_id.c
+@@ -39,7 +39,7 @@
+ #include <linux/fs.h>
+ #include <linux/cdrom.h>
+ #include <linux/bsg.h>
+-#include <linux/fcntl.h>
++//#include <linux/fcntl.h>
+ #include <arpa/inet.h>
+ 
+ #include "libudev.h"
+diff --git a/src/collect/collect.c b/src/collect/collect.c
+index fbaf87f..9ae99eb 100755
+--- a/src/collect/collect.c
++++ b/src/collect/collect.c
+@@ -30,7 +30,7 @@
+ #include <getopt.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#include <linux/fcntl.h>
++//#include <linux/fcntl.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
+diff --git a/src/mtd_probe/mtd_probe.c b/src/mtd_probe/mtd_probe.c
+index e604a72..95634dd 100755
+--- a/src/mtd_probe/mtd_probe.c
++++ b/src/mtd_probe/mtd_probe.c
+@@ -25,7 +25,7 @@
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <stdlib.h>
+-#include <linux/fcntl.h>
++//#include <linux/fcntl.h>
+ 
+ int main(int argc, char** argv)
+ {
+diff --git a/src/scsi_id/scsi_serial.c b/src/scsi_id/scsi_serial.c
+index b60b154..1e5ae41 100755
+--- a/src/scsi_id/scsi_serial.c
++++ b/src/scsi_id/scsi_serial.c
+@@ -33,7 +33,7 @@
+ #include <scsi/sg.h>
+ #include <linux/types.h>
+ #include <linux/bsg.h>
+-#include <linux/fcntl.h>
++//#include <linux/fcntl.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
