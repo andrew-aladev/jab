@@ -349,7 +349,7 @@
               LDFLAGS="-flto -fuse-linker-plugin"
 
         %p
-          Disable lto in several packages
+          Disable lto in several packages.
 
         = preserve do
           - code("shell") do
@@ -358,6 +358,48 @@
               echo 'CFLAGS="${CFLAGS} -fno-lto -fno-use-linker-plugin"
               CXXFLAGS="${CXXFLAGS} -fno-lto -fno-use-linker-plugin"
               LDFLAGS="${LDFLAGS} -fno-lto -fno-use-linker-plugin"' >> /etc/portage/env/no-lto.conf
+              mkdir -p /etc/portage/package.env/
+
+        %p
+          Disable lto in several packages for arm.
+
+        = preserve do
+          - code("shell") do
+            :plain
+              echo 'dev-lang/perl no-lto.conf
+              dev-lang/python no-lto.conf' >> /etc/portage/package.env/dev-lang
+              echo 'net-misc/openssh no-lto.conf' >> /etc/portage/package.env/net-misc
+              echo 'sys-apps/sysvinit no-lto.conf
+              sys-apps/shadow no-lto.conf
+              sys-apps/findutils no-lto.conf
+              sys-apps/coreutils no-lto.conf
+              sys-apps/gawk no-lto.conf
+              sys-apps/sandbox no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
+
+        %p
+          Disable lto in several packages for mips.
+
+        = preserve do
+          - code("shell") do
+            :plain
+              echo 'app-arch/bzip2 no-lto.conf' >> /etc/portage/package.env/app-arch
+              echo 'dev-lang/perl no-lto.conf
+              dev-lang/python no-lto.conf' >> /etc/portage/package.env/dev-lang
+              echo 'dev-libs/elfutils no-lto.conf' >> /etc/portage/package.env/dev-libs
+              echo 'net-misc/openssh no-lto.conf' >> /etc/portage/package.env/net-misc
+              echo 'sys-apps/sysvinit no-lto.conf
+              sys-apps/openrc no-lto.conf
+              sys-apps/shadow no-lto.conf
+              sys-apps/tcp-wrappers no-lto.conf
+              sys-apps/findutils no-lto.conf
+              sys-apps/coreutils no-lto.conf
+              sys-apps/gawk no-lto.conf
+              sys-apps/sandbox no-lto.conf' >> /etc/portage/package.env/sys-apps
+              echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
+              echo 'sys-libs/ncurses no-lto.conf
+              sys-libs/e2fsprogs-libs no-lto.conf
+              sys-libs/readline no-lto.conf' >> /etc/portage/package.env/sys-libs
 
         %p
           Continue building minimal software.
@@ -365,31 +407,24 @@
         = preserve do
           - code("shell") do
             :plain
+              mkdir -p /etc/portage/package.env/
+
               emerge -v1 gcc
 
-              mkdir -p /etc/portage/package.env/
-              echo 'dev-libs/elfutils no-lto.conf' >> /etc/portage/package.env/dev-libs
               emerge -v1 pkgconfig
-
               emerge -v1 glibc
               emerge -v1 linux-headers
               emerge -v1 binutils
 
               emerge -C baselayout-prefix
-              echo 'sys-apps/sysvinit no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -v1 openrc
 
-              echo 'dev-lang/perl no-lto.conf' >> /etc/portage/package.env/dev-lang
               emerge -v1 perl
-
-              echo 'sys-apps/shadow no-lto.conf' >> /etc/portage/package.env/sys-apps
-              echo 'net-misc/openssh no-lto.conf' >> /etc/portage/package.env/net-misc
               emerge -v1 openssh
 
               echo 'sys-fs/udev' >> /etc/portage/package.mask/sys-fs
               emerge -v eudev
 
-              echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
               emerge -vuDN --with-bdeps=y world
 
         %p
@@ -398,11 +433,6 @@
         = preserve do
           - code("shell") do
             :plain
-              echo 'sys-apps/tcp-wrappers no-lto.conf' >> /etc/portage/package.env/sys-apps
-              echo 'sys-apps/openrc no-lto.conf' >> /etc/portage/package.env/sys-apps
-              echo 'sys-libs/ncurses no-lto.conf' >> /etc/portage/package.env/sys-libs
-              echo 'sys-libs/e2fsprogs-libs no-lto.conf' >> /etc/portage/package.env/sys-libs
-
               mkdir -p /etc/portage/patches/sys-fs/eudev-1.5.2/
               sudo wget "https://www.puchuu.com/patches/sys-fs/eudev-1.5.2/fcntl.patch" -O /etc/portage/patches/sys-fs/eudev-1.5.2/fcntl.patch
 
@@ -417,9 +447,6 @@
               echo 'OVERLAY_CACHE_METHOD=parse' >> /etc/eixrc/00-eixrc
               eix-update
 
-              echo 'sys-apps/findutils no-lto.conf' >> /etc/portage/package.env/sys-apps
-              echo 'sys-apps/coreutils no-lto.conf' >> /etc/portage/package.env/sys-apps
-              echo 'sys-apps/gawk no-lto.conf' >> /etc/portage/package.env/sys-apps
               emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
 
         %p
@@ -444,7 +471,8 @@
 
         %p
           :markdown
-            Download [arm-hardfloat-linux-gnueabi-20140305.tar.xz](https://drive.google.com/file/d/0B11zLXPSukRzRHpJZEFMdmd4MHM/edit?usp=sharing)
+            Download [arm-hardfloat-linux-gnueabi](https://drive.google.com/file/d/0B11zLXPSukRzSUxZR21RZjg0ZVk/edit?usp=sharing)
+            Download [mips-unknown-linux-gnueabi](https://drive.google.com/file/d/0B11zLXPSukRzQm9EV0JrdDd5RHM/edit?usp=sharing)
 
         %br
         %p Yay!
