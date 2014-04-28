@@ -1,0 +1,87 @@
+- content_for :title, "aarch64 chroot"
+- content_for :description, "How to create full featured aarch64 chroot environment in gentoo."
+- content_for :keywords, "aarch64, gcc, gdb, toolchain, stage3, qemu, cflags, chost"
+- content_for :script do
+  = javascript_include_tag "//connect.facebook.net/en_US/all.js#xfbml=1&appId=259424114218414"
+- content_for :content do
+  %ul.content
+    %li
+      .label
+        %h1
+          How to create full featured aarch64 chroot environment in gentoo
+        %p.date
+          28.04.14
+      .topic
+        %p
+          :markdown
+            [gcc 4.9](http://gcc.gnu.org/gcc-4.9/changes.html) got many improvements for aarch64.
+            [qemu emulator 2.0](http://wiki.qemu.org/ChangeLog/2.0) got support for aarch64 user-mode emulation.
+            Lets create aarch64 chroot environment.
+
+        %p
+          :markdown
+            Please install [layman](https://wiki.gentoo.org/wiki/Layman) first.
+        %p
+          :markdown
+            Add **toolchain** overlay with recent gcc.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo layman -a toolchain
+              echo "*/*::toolchain" | sudo tee -a /etc/portage/package.mask/overlay
+
+        %p
+          Create local overlay to work with crossdev.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /usr/local/portage/overlay/profiles/
+              sudo mkdir -p /usr/local/portage/overlay/metadata/
+              echo "local-overlay" | sudo tee -a /usr/local/portage/overlay/profiles/repo_name
+              echo "masters = gentoo" | sudo tee -a /usr/local/portage/overlay/metadata/layout.conf
+
+        %p
+          Copy recent gcc ebuild to local overlay.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /usr/local/portage/overlay/sys-devel/gcc/
+              sudo cp /var/lib/layman/toolchain/sys-devel/gcc/gcc-4.9.0_alpha20140423.ebuild /usr/local/portage/overlay/sys-devel/gcc/gcc-4.9.0.ebuild
+              sudo cp -R /var/lib/layman/toolchain/sys-devel/gcc/files/ /usr/local/portage/overlay/sys-devel/gcc/
+              sudo ebuild /usr/local/portage/overlay/sys-devel/gcc/gcc-4.9.0.ebuild manifest
+
+        %p
+          :markdown
+            Please check **PORTDIR_OVERLAY** variable in **/etc/portage/make.conf**.
+        = preserve do
+          - code("shell") do
+            :plain
+              PORTDIR_OVERLAY="/usr/portage /usr/local/portage/overlay ${PORTDIR_OVERLAY}"
+
+        %p
+          :markdown
+            There is a small problem in crossdev : [overlay search does not consider requested versions](https://bugs.gentoo.org/show_bug.cgi?id=508008)
+            You can apply my patch, but it is very basic.
+            Please reinstall crossdev after using this tutorial.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo emerge -v sys-devel/crossdev
+              wget "https://www.puchuu.com/patches/sys-devel/crossdev/overlay_search.patch" -O /tmp/overlay_search.patch
+              sudo patch /usr/bin/crossdev /tmp/overlay_search.patch
+
+        %p
+          Now you can create usual crossdev environment for aarch64
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo crossdev -t aarch64-unknown-linux-gnueabi --g 4.9.0 --l 2.19 --k 3.14 --b 9999
+              
+              sudo rm /usr/aarch64-unknown-linux-gnueabi/etc/portage/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/arm64/13.0/ /usr/aarch64-unknown-linux-gnueabi/etc/portage/make.profile
+        
+      
+        %br
+        %p Please feel free to comment this topic.
+        #fb-root
+        .fb-comments(data-href="https://www.puchuu.com/posts/aarch64-chroot.html" data-numposts="10" data-colorscheme="light")
