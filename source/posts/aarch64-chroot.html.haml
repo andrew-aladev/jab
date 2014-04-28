@@ -14,8 +14,9 @@
       .topic
         %p
           :markdown
-            [gcc 4.9](http://gcc.gnu.org/gcc-4.9/changes.html) got many improvements for aarch64.
-            [qemu emulator 2.0](http://wiki.qemu.org/ChangeLog/2.0) got support for aarch64 user-mode emulation.
+            There are some great news:
+            [gcc 4.9](http://gcc.gnu.org/gcc-4.9/changes.html) got many improvements for aarch64,
+            [qemu 2.0](http://wiki.qemu.org/ChangeLog/2.0) got support for aarch64 user-mode emulation.
             Lets create aarch64 chroot environment.
 
         %p
@@ -23,7 +24,7 @@
             Please install [layman](https://wiki.gentoo.org/wiki/Layman) first.
         %p
           :markdown
-            Add **toolchain** overlay with recent gcc.
+            Than add **toolchain** overlay with recent gcc.
         = preserve do
           - code("shell") do
             :plain
@@ -52,7 +53,7 @@
 
         %p
           :markdown
-            Please check **PORTDIR_OVERLAY** variable in **/etc/portage/make.conf**.
+            Check **PORTDIR_OVERLAY** variable in **/etc/portage/make.conf**.
         = preserve do
           - code("shell") do
             :plain
@@ -77,10 +78,42 @@
             :plain
               sudo crossdev -t aarch64-unknown-linux-gnueabi --g 4.9.0 --l 2.19 --k 3.14 --b 9999
               
+              sudo rmdir /usr/aarch64-unknown-linux-gnueabi/usr/lib/
+              sudo ln -s /usr/aarch64-unknown-linux-gnueabi/usr/lib64/ /usr/aarch64-unknown-linux-gnueabi/usr/lib
+              
               sudo rm /usr/aarch64-unknown-linux-gnueabi/etc/portage/make.profile
               sudo ln -s /usr/portage/profiles/default/linux/arm64/13.0/ /usr/aarch64-unknown-linux-gnueabi/etc/portage/make.profile
         
-      
+        %p
+          :markdown
+            Set the following configuration lines to **/usr/aarch64-unknown-linux-gnueabi/etc/portage/make.conf**
+        = preserve do
+          - code("shell") do
+            :plain
+              USE="${ARCH} minimal -pam -nls"
+              CFLAGS="-O2 -pipe"
+              MAKEOPTS="-j9"
+              FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
+              PYTHON_TARGETS="python3_4"
+              PYTHON_SINGLE_TARGET="python3_4"
+              PORTDIR_OVERLAY="/usr/portage /usr/local/portage/overlay"
+              
+        %p
+          Than you need to build minimal toolchain
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /usr/aarch64-unknown-linux-gnueabi/etc/portage/package.keywords
+              echo "=sys-devel/binutils-9999 **
+              =sys-devel/gcc-4.9.0 **" | sudo tee -a /usr/aarch64-unknown-linux-gnueabi/etc/portage/package.keywords/sys-devel
+              
+              sudo mkdir -p /usr/aarch64-unknown-linux-gnueabi/etc/portage/env/dev-lang
+              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/aarch64-unknown-linux-gnueabi/etc/portage/env/dev-lang/python > /dev/null
+              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/aarch64-unknown-linux-gnueabi/etc/portage/env/dev-lang/python > /dev/null
+              
+              sudo aarch64-unknown-linux-gnueabi-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash portage findutils wget app-arch/tar sys-devel/make grep patch
+        
+        
         %br
         %p Please feel free to comment this topic.
         #fb-root
