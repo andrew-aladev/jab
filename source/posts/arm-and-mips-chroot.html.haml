@@ -63,7 +63,7 @@
               sudo mkdir -p /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.unmask
               echo '=sys-devel/gcc-4.8.2-r1' | sudo tee -a /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.unmask/sys-devel > /dev/null
               sudo mkdir -p /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.keywords
-              echo '=sys-devel/gcc-4.8.2-r1 **' | sudo tee -a /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.keywords/sys-libs > /dev/null
+              echo '=sys-devel/gcc-4.8.2-r1 **' | sudo tee -a /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.keywords/sys-devel > /dev/null
               echo '=sys-libs/glibc-2.19 **' | sudo tee -a /usr/arm-hardfloat-linux-gnueabi/etc/portage/package.keywords/sys-libs > /dev/null
               sudo mkdir -p /usr/arm-hardfloat-linux-gnueabi/etc/portage/env/dev-lang
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/arm-hardfloat-linux-gnueabi/etc/portage/env/dev-lang/python > /dev/null
@@ -407,8 +407,6 @@
         = preserve do
           - code("shell") do
             :plain
-              mkdir -p /etc/portage/package.env/
-
               emerge -v1 gcc
 
               emerge -v1 pkgconfig
