@@ -111,8 +111,153 @@
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/aarch64-unknown-linux-gnueabi/etc/portage/env/dev-lang/python > /dev/null
               echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/aarch64-unknown-linux-gnueabi/etc/portage/env/dev-lang/python > /dev/null
               
-              sudo aarch64-unknown-linux-gnueabi-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash portage findutils wget app-arch/tar sys-devel/make grep patch
+              sudo aarch64-unknown-linux-gnueabi-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash portage findutils wget app-arch/tar sys-devel/make grep patch gawk
+              
+              sudo mkdir -p /usr/aarch64-unknown-linux-gnueabi/etc/portage/patches/sys-devel/gcc-4.9.0
+              sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O /usr/aarch64-unknown-linux-gnueabi/etc/portage/patches/sys-devel/gcc-4.9.0/target_header_dir.patch
+              
+              sudo aarch64-unknown-linux-gnueabi-emerge -v1 sys-devel/gcc
+              
+        %p
+          You can copy toolchain to your workspace now and start prepairing chroot
+        = preserve do
+          - code("shell") do
+            :plain
+              mkdir -p ~/workspace
+              sudo cp -R /usr/aarch64-unknown-linux-gnueabi ~/workspace/
+              
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/usr/local/portage/
+              sudo cp -R /usr/local/portage/overlay/ ~/workspace/aarch64-unknown-linux-gnueabi/usr/local/portage/
+              
+              sudo mkdir -p /etc/portage/env/
+              echo 'QEMU_USER_TARGETS="aarch64"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
+
+              sudo mkdir -p /etc/portage/package.env/
+              echo 'app-emulation/qemu-user qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
+              
+              sudo mkdir -p /etc/portage/patches/app-emulation/qemu-user-9999/
+              sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch" -O /etc/portage/patches/app-emulation/qemu-user-9999/binfmt-wrapper.patch
+              
+              sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/aarch64_initd.patch" -O /tmp/aarch64_initd.patch
+              sudo patch /usr/portage/app-emulation/qemu-user/files/qemu-binfmt.initd /tmp/aarch64_initd.patch
+              
+              sudo wget "https://www.puchuu.com/patches/app-emulation/qemu-user-9999/aarch64_ebuild.patch" -O /tmp/aarch64_ebuild.patch
+              sudo patch /usr/portage/app-emulation/qemu-user/qemu-user-9999.ebuild /tmp/aarch64_ebuild.patch
+              sudo ebuild /usr/portage/app-emulation/qemu-user/qemu-user-9999.ebuild manifest
+              
+              sudo mkdir -p /etc/portage/package.unmask/
+              echo "=app-emulation/qemu-user-9999" | sudo tee -a /etc/portage/package.unmask/app-emulation
+              sudo mkdir -p /etc/portage/package.keywords/
+              echo "=app-emulation/qemu-user-9999 **" | sudo tee -a /etc/portage/package.keywords/app-emulation
+              
+              sudo emerge -v qemu-user
+              sudo rc-service qemu-binfmt start
+              
+              sudo cp /usr/bin/qemu-static-aarch64        ~/workspace/aarch64-unknown-linux-gnueabi/usr/bin/
+              sudo cp /usr/bin/qemu-static-aarch64-binfmt ~/workspace/aarch64-unknown-linux-gnueabi/usr/bin/
+              
+              sudo wget "http://mirror.yandex.ru/gentoo-distfiles/snapshots/portage-latest.tar.bz2" -O /tmp/portage-latest.tar.bz2
+              sudo tar xvjf /tmp/portage-latest.tar.bz2 -C ~/workspace/aarch64-unknown-linux-gnueabi/usr/
         
+        %p
+          Clean chroot environment
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rm -r ~/workspace/aarch64-unknown-linux-gnueabi/tmp/portage/*
+              sudo rm ~/workspace/aarch64-unknown-linux-gnueabi/etc/portage/make.profile
+              sudo rm -r ~/workspace/aarch64-unknown-linux-gnueabi/etc/portage/env
+              sudo rm -r ~/workspace/aarch64-unknown-linux-gnueabi/etc/portage/patches
+              
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/proc
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/dev
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/sys
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/root
+              sudo mkdir -p ~/workspace/aarch64-unknown-linux-gnueabi/usr/portage/
+              
+              echo 'root:x:0:0:root:/root:/bin/bash
+              portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a ~/workspace/aarch64-unknown-linux-gnueabi/etc/passwd > /dev/null
+              echo 'root:x:0:root
+              portage::250:portage' | sudo tee -a ~/workspace/aarch64-unknown-linux-gnueabi/etc/group > /dev/null
+              
+              echo 'LANG="en_US.UTF-8"
+              LC_COLLATE="C"' | sudo tee -a ~/workspace/aarch64-unknown-linux-gnueabi/etc/env.d/02locale > /dev/null
+              
+              echo 'en_US.UTF-8 UTF-8' | sudo tee -a ~/workspace/aarch64-unknown-linux-gnueabi/etc/locale.gen > /dev/null
+              
+        %p
+          :markdown
+            Set **~/workspace/aarch64-unknown-linux-gnueabi/etc/portage/make.conf** to something like
+        = preserve do
+          - code("shell") do
+            :plain
+              SYNC="rsync://mirror.yandex.ru/gentoo-portage/"
+              GENTOO_MIRRORS="http://mirror.yandex.ru/gentoo-distfiles/"
+
+              CHOST="aarch64-unknown-linux-gnueabi"
+              CFLAGS="-O2 -pipe"
+              CXXFLAGS="${CFLAGS}"
+              MAKEOPTS="-j9"
+
+              FEATURES=""
+              ACCEPT_KEYWORDS="~arm64"
+              LINGUAS="en"
+
+              USE="-pam -nls"
+
+              PORTDIR="/usr/portage"
+              PORTDIR_OVERLAY="/usr/portage /usr/local/portage/overlay ${PORTDIR_OVERLAY}"
+
+              PYTHON_TARGETS="python3_4"
+              PYTHON_SINGLE_TARGET="python3_4"
+        
+        %p
+          Now mount and chroot
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mount -t proc none ~/workspace/aarch64-unknown-linux-gnueabi/proc/
+              sudo mount -o bind /sys ~/workspace/aarch64-unknown-linux-gnueabi/sys/
+              sudo mount -o bind /dev ~/workspace/aarch64-unknown-linux-gnueabi/dev/
+              sudo mount -o bind /dev/pts/ ~/workspace/aarch64-unknown-linux-gnueabi/dev/pts/
+              sudo mount -o bind /dev/shm/ ~/workspace/aarch64-unknown-linux-gnueabi/dev/shm/
+              sudo cp /etc/resolv.conf ~/workspace/aarch64-unknown-linux-gnueabi/etc/
+              
+              sudo chroot ~/workspace/aarch64-unknown-linux-gnueabi/ /bin/bash
+        
+        %p
+          Build usual minimal software for arm and mips. This process will be slow (especially configure)
+        = preserve do
+          - code("shell") do
+            :plain
+              chmod a+w /tmp
+              chmod a+w /var/tmp
+              
+              rm /usr/lib
+              ln -s /usr/lib64/ /usr/lib
+              env-update
+              ln -s /usr/portage/profiles/default/linux/arm64/13.0 /etc/portage/make.profile
+
+              rm /usr/portage/metadata/timestamp.chk
+              emerge --sync
+
+              echo '' > /var/lib/portage/world
+
+              emerge -v1 diffutils
+
+              mkdir -p /etc/portage/package.keywords/
+              echo '=sys-apps/baselayout-prefix-2.2-r3 **' >> /etc/portage/package.keywords/sys-apps
+              emerge -v1 baselayout-prefix
+              source /etc/profile
+
+              emerge -v1 gzip
+              locale-gen
+
+              emerge -v1 gawk
+              emerge -v1 net-tools
+              USE="-berkdb" emerge -v1 perl
+              USE="internal-glib" emerge -v1 pkgconfig
         
         %br
         %p Please feel free to comment this topic.

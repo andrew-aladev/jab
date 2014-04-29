@@ -97,7 +97,7 @@
         
         %p
           :markdown
-            You should make the gawk patchable, edit **/usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild**.
+            You should make the gawk patchable, edit **/usr/portage/sys-apps/gawk/gawk-4.1.0.ebuild**
         
         = preserve do
           - code("shell") do
@@ -107,7 +107,7 @@
                 epatch_user
               }
         %p
-          Than emerge it.
+          Than emerge it
         
         = preserve do
           - code("shell") do
@@ -123,7 +123,7 @@
               sudo mips-unknown-linux-gnueabi-emerge -v1 gawk
         
         %p
-          You can copy toolchain to your workspace now and start prepairing chroot.
+          You can copy toolchain to your workspace now and start prepairing chroot
         
         = preserve do
           - code("shell") do
@@ -154,14 +154,14 @@
         
         %p
           :markdown
-            Now you can register **qemu-static-arm-binfmt** and **qemu-static-mips-binfmt** in kernel.
+            Now you can register **qemu-static-arm-binfmt** and **qemu-static-mips-binfmt** in kernel
         = preserve do
           - code("shell") do
             :plain
               sudo rc-service qemu-binfmt start
         
         %p
-          Copy qemu emulator to chroot.
+          Copy qemu emulator to chroot
         
         = preserve do
           - code("shell") do
@@ -173,7 +173,7 @@
               sudo cp /usr/bin/qemu-static-mips        ~/workspace/mips-unknown-linux-gnueabi/usr/bin/
         
         %p
-          Clean chroot environment.
+          Clean chroot environment
         
         = preserve do
           - code("shell") do
@@ -223,7 +223,7 @@
 
         %p
           :markdown
-            Set **~/workspace/arm-hardfloat-linux-gnueabi/etc/portage/make.conf** to something like.
+            Set **~/workspace/arm-hardfloat-linux-gnueabi/etc/portage/make.conf** to something like
         
         = preserve do
           - code("shell") do
@@ -250,7 +250,7 @@
         
         %p
           :markdown
-            Set **~/workspace/mips-unknown-linux-gnueabi/etc/portage/make.conf** to something like.
+            Set **~/workspace/mips-unknown-linux-gnueabi/etc/portage/make.conf** to something like
 
         = preserve do
           - code("shell") do
@@ -283,8 +283,6 @@
           - code("shell") do
             :plain
               sudo wget "http://mirror.yandex.ru/gentoo-distfiles/snapshots/portage-latest.tar.bz2" -O /tmp/portage-latest.tar.bz2
-
-
               sudo tar xvjf /tmp/portage-latest.tar.bz2 -C ~/workspace/arm-hardfloat-linux-gnueabi/usr/
               
               sudo mount -t proc none ~/workspace/arm-hardfloat-linux-gnueabi/proc/

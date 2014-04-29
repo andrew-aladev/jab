@@ -1,0 +1,20 @@
+--- a/qemu-binfmt    2014-04-29 19:36:02.883589877 +0300
++++ b/qemu-binfmt    2014-04-29 19:52:12.036735336 +0300
+@@ -57,6 +57,9 @@
+    if [ $cpu != "alpha" -a -x "/usr/bin/qemu-static-alpha-binfmt" ] ; then
+       echo ':alpha:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x26\x90:\xff\xff\xff\xff\xff\xfe\xfe\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-static-alpha-binfmt:P' > /proc/sys/fs/binfmt_misc/register
+    fi
++   if [ $cpu != "aarch64" -a -x "/usr/bin/qemu-static-aarch64-binfmt" ] ; then
++      echo ':aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-static-aarch64-binfmt:P' > /proc/sys/fs/binfmt_misc/register
++   fi
+    if [ $cpu != "arm" -a -x "/usr/bin/qemu-static-arm-binfmt" ] ; then
+       echo   ':arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\x00\xff\xfe\xff\xff\xff:/usr/bin/qemu-static-arm-binfmt:P' > /proc/sys/fs/binfmt_misc/register
+    fi
+@@ -110,6 +113,7 @@
+ 
+    arches="${arches} i386 i486"
+    arches="${arches} alpha"
++   arches="${arches} aarch64"
+    arches="${arches} arm armeb"
+    arches="${arches} sparc"
+    arches="${arches} ppc"

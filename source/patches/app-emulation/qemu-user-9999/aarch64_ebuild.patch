@@ -1,0 +1,27 @@
+--- a/qemu-user-9999.ebuild	2013-08-15 12:01:04.000000000 +0300
++++ b/qemu-user-9999.ebuild	2014-04-18 14:07:38.465264005 +0300
+@@ -29,7 +29,7 @@
+ IUSE=""
+ RESTRICT="test"
+ 
+-COMMON_TARGETS="i386 x86_64 alpha arm cris m68k microblaze microblazeel mips mips64 mipsel ppc ppc64 sh4 sh4eb sparc sparc64 s390x"
++COMMON_TARGETS="i386 x86_64 alpha aarch64 arm cris m68k microblaze microblazeel mips mips64 mipsel ppc ppc64 sh4 sh4eb sparc sparc64 s390x"
+ IUSE_USER_TARGETS="${COMMON_TARGETS} armeb ppc64abi32 sparc32plus unicore32"
+ 
+ for target in ${IUSE_USER_TARGETS}; do
+@@ -69,6 +69,7 @@
+ 	usr/bin/qemu-static-i386-binfmt
+ 	usr/bin/qemu-static-cris-binfmt
+ 	usr/bin/qemu-static-arm-binfmt
++        usr/bin/qemu-static-aarch64-binfmt
+ 	usr/bin/qemu-static-sparc64-binfmt
+ 	usr/bin/qemu-static-mipsn32-binfmt
+ "
+@@ -99,6 +100,7 @@
+ 	done
+ 
+ 	conf_opts="--enable-linux-user"
++        conf_opts+=" --python=python2.7"
+ 	conf_opts+=" --disable-bsd-user"
+ 	conf_opts+=" --disable-system"
+ 	conf_opts+=" --disable-vnc-tls"
