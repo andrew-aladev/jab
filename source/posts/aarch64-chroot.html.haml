@@ -258,7 +258,27 @@
               emerge -v1 net-tools
               USE="-berkdb" emerge -v1 perl
               USE="internal-glib" emerge -v1 pkgconfig
+
+        %p
+          :markdown
+            You can enable lto. Set the following lines to **/etc/portage/make.conf**
+        = preserve do
+          - code("shell") do
+            :plain
+              CFLAGS="-O2 -pipe -flto -fuse-linker-plugin"
+              LDFLAGS="-flto -fuse-linker-plugin"
         
+        %p
+          Disable lto in several packages
+        = preserve do
+          - code("shell") do
+            :plain
+              mkdir -p /etc/portage/env/
+              echo 'CFLAGS="${CFLAGS} -fno-lto -fno-use-linker-plugin"
+              CXXFLAGS="${CXXFLAGS} -fno-lto -fno-use-linker-plugin"
+              LDFLAGS="${LDFLAGS} -fno-lto -fno-use-linker-plugin"' >> /etc/portage/env/no-lto.conf
+              mkdir -p /etc/portage/package.env/
+
         %br
         %p Please feel free to comment this topic.
         #fb-root
