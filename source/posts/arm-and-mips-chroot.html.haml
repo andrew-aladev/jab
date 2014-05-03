@@ -347,7 +347,7 @@
               LDFLAGS="-flto -fuse-linker-plugin"
 
         %p
-          Disable lto in several packages.
+          Disable lto in several packages
 
         = preserve do
           - code("shell") do
@@ -359,7 +359,7 @@
               mkdir -p /etc/portage/package.env/
 
         %p
-          Disable lto in several packages for arm.
+          Disable lto in several packages for arm
 
         = preserve do
           - code("shell") do
@@ -376,7 +376,7 @@
               echo 'sys-fs/e2fsprogs no-lto.conf' >> /etc/portage/package.env/sys-fs
 
         %p
-          Disable lto in several packages for mips.
+          Disable lto in several packages for mips
 
         = preserve do
           - code("shell") do
@@ -400,7 +400,7 @@
               sys-libs/readline no-lto.conf' >> /etc/portage/package.env/sys-libs
 
         %p
-          Continue building minimal software.
+          Continue building minimal software
 
         = preserve do
           - code("shell") do
@@ -434,7 +434,7 @@
 
         %p
           :markdown
-            Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**.
+            Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**
 
         = preserve do
           - code("shell") do

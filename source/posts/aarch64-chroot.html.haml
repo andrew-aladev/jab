@@ -279,6 +279,37 @@
               LDFLAGS="${LDFLAGS} -fno-lto -fno-use-linker-plugin"' >> /etc/portage/env/no-lto.conf
               mkdir -p /etc/portage/package.env/
 
+        %p
+          Continue building minimal software
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              emerge -v1 gcc
+
+              emerge -v1 pkgconfig
+              emerge -v1 glibc
+              emerge -v1 linux-headers
+              
+              echo "=dev-vcs/git-1.9.2 **" >> /etc/portage/package.keywords/dev-vcs
+              emerge -v1 git
+        
+        %p
+          :markdown
+            Now you need to rebuild all packages, that was builded before gcc. The simpliest way is to use **eix**
+
+        = preserve do
+          - code("shell") do
+            :plain
+              echo "=app-portage/eix-0.30.1 **" >> /etc/portage/package.keywords/app-portage
+              echo "=app-shells/push-1.6 **" >> /etc/portage/package.keywords/app-shells
+              emerge -v eix
+              echo 'OVERLAY_CACHE_METHOD=parse' >> /etc/eixrc/00-eixrc
+              eix-update
+
+              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
+
+        
         %br
         %p Please feel free to comment this topic.
         #fb-root
