@@ -209,8 +209,8 @@
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage /usr/local/portage/overlay ${PORTDIR_OVERLAY}"
 
-              PYTHON_TARGETS="python3_4"
-              PYTHON_SINGLE_TARGET="python3_4"
+              PYTHON_TARGETS="python3_4 python2_7"
+              PYTHON_SINGLE_TARGET="python3_4 python2_7"
         
         %p
           Now mount and chroot
@@ -290,9 +290,31 @@
               emerge -v1 pkgconfig
               emerge -v1 glibc
               emerge -v1 linux-headers
-              
+
+              emerge -v1 groff
+
+              echo "dev-vcs/git -threads" >> /etc/portage/package.use/dev-vcs
               echo "=dev-vcs/git-1.9.2 **" >> /etc/portage/package.keywords/dev-vcs
               emerge -v1 git
+              
+              emerge -v1 binutils
+              
+              emerge -C baselayout-prefix
+              emerge -v1 baselayout
+              
+              rm /usr/lib
+              ln -s /usr/lib64/ /usr/lib
+              source /etc/profile
+              env-update
+              
+              emerge -v1 openrc
+              emerge -v1 perl
+              emerge -v1 openssh
+              
+              echo 'sys-fs/udev' >> /etc/portage/package.mask/sys-fs
+              emerge -v eudev
+
+              emerge -vuDN --with-bdeps=y world
         
         %p
           :markdown
