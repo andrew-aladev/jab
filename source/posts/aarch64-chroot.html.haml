@@ -310,10 +310,14 @@
               emerge -v1 openrc
               emerge -v1 perl
               emerge -v1 openssh
-              
-              echo 'sys-fs/udev' >> /etc/portage/package.mask/sys-fs
+
+              mkdir -p /etc/portage/package.mask              
+              echo "sys-fs/udev" >> /etc/portage/package.mask/sys-fs
+              echo "=dev-util/gperf-3.0.4 **" >> /etc/portage/package.keywords/dev-util
+              echo "=sys-fs/eudev-1.6 **" >> /etc/portage/package.keywords/sys-fs
               emerge -v eudev
 
+              echo "=sys-apps/busybox-1.22.1 **" >> /etc/portage/package.keywords/sys-apps
               emerge -vuDN --with-bdeps=y world
         
         %p
