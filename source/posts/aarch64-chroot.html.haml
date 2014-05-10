@@ -333,7 +333,8 @@
               echo 'OVERLAY_CACHE_METHOD=parse' >> /etc/eixrc/00-eixrc
               eix-update
 
-              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.8)?$")) exit(0); print $0}' | tr "\n" " ")
+              emerge -v1 $(eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f3 | awk '{if (match($0, "^sys-devel/gcc(\\:4\\.9)?$")) exit(0); print $0}' | tr "\n" " 
+")
 
         
         %br
