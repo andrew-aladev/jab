@@ -6,7 +6,7 @@
     %li
       .label
         %h1
-          How to create full featured arm and mips chroot environment in gentoo
+          How to create arm and mips chroot environment in gentoo
         %p.date
           18.03.14
       .topic
@@ -21,4 +21,23 @@
             It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
             For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** and **mips** arch.
         %a.more(href="/posts/arm-and-mips-chroot.html") Read more
-
+        
+    %li
+      .label
+        %h1
+          How to create aarch64 chroot environment in gentoo
+        %p.date
+          15.05.14
+      .topic
+        %p
+          There are some great news
+        %ol
+          %li
+            :markdown
+              [gcc 4.9](http://gcc.gnu.org/gcc-4.9/changes.html) have got many improvements for aarch64.
+          %li
+            :markdown
+              [qemu 2.0](http://wiki.qemu.org/ChangeLog/2.0) have got support for aarch64 user-mode emulation.
+        %p
+          Lets create aarch64 chroot environment.
+        %a.more(href="/posts/aarch64-chroot.html") Read more

@@ -10,8 +10,12 @@
   list-style-type : none;
   
   > li {
-    margin : 0 2px;
+    margin : 10px 2px 0 2px;
     border : 1px solid #bbb;
+    
+    &:first-child {
+        margin-top : 0;
+    }
     
     .label {
       position      : relative;
