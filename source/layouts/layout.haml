@@ -5,8 +5,6 @@
     %meta(name="viewport" content="width=device-width, initial-scale=0.7")
     %meta(name="description" content="#{yield_content :description}")
     %meta(name="keywords" content="gentoo, programming, development, blog, pure c, anime, puchuu, #{yield_content :keywords}")
-    %meta(property="fb:admins" content="puchuu.punya")
-    %meta(property="fb:app_id" content="259424114218414")
     %title
       = yield_content :title
     %link(rel="icon" type="image/ico" href="/img/favicon.ico")
@@ -21,3 +19,4 @@
     = partial "partials/global/splash"
     = partial "partials/global/gag"
     = partial "partials/global/popup"
+    = yield_content :end_of_body

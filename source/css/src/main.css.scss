@@ -2,16 +2,20 @@ html {
   height : 100%;
   
   body {
-    position   : relative;
-    min-height : 100%;
-    margin     : 0;
-    font       : 0.9em arial;
-    color      : #444;
+    position    : relative;
+    min-height  : 100%;
+    margin      : 0;
+    font-family : arial;
+    font-size   : 62.5%;
+    color       : #444;
   }
 }
 a {
   color : #0069FF;
   text-decoration : none;
+}
+pre {
+  font-family : inherit;
 }
 @import "global/main";
 @import "utils/main";

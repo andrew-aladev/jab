@@ -2,7 +2,13 @@
 - content_for :description, "How to create full featured arm and mips chroot environment in gentoo."
 - content_for :keywords, "arm, mips, gcc, gdb, toolchain, stage3, qemu, cflags, chost"
 - content_for :script do
-  = javascript_include_tag "//connect.facebook.net/en_US/all.js#xfbml=1&appId=259424114218414"
+  %script(type="text/javascript")
+    :plain
+      var disqus_shortname = "puchuu";
+      var disqus_title = "arm and mips chroot";
+- content_for :end_of_body do
+  = javascript_include_tag "//puchuu.disqus.com/embed.js"
+
 - content_for :content do
   %ul.content
     %li
@@ -475,5 +481,5 @@
       
         %br
         %p Feel free to comment this topic.
-        #fb-root
-        .fb-comments(data-href="https://www.puchuu.com/posts/arm-chroot.html" data-numposts="10" data-colorscheme="light" data-width="100%")
+        
+        #disqus_thread
