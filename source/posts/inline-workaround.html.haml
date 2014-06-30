@@ -1,0 +1,197 @@
+- content_for :title, "Inline workaround"
+- content_for :description, "How to force inline functions to work with all available C compilers."
+- content_for :keywords, "c, inline, extern, c90, c99, gcc, clang, tcc"
+- content_for :script do
+  %script(type="text/javascript")
+    :plain
+      var disqus_shortname = "puchuu";
+      var disqus_title = "inline workaround";
+- content_for :end_of_body do
+  = javascript_include_tag "//puchuu.disqus.com/embed.js"
+
+- content_for :content do
+  %ul.content
+    %li
+      .label
+        %h1
+          How to force inline functions to work with all available c90/c99 C compilers.
+        %p.date
+          30.06.14
+      .topic
+        %p
+          Usage of inline functions in c90/c99 is not so trivial as it should be.
+        
+        %p
+          :markdown
+            Let file **test.h**
+        = preserve do
+          - code("c") do
+            :plain
+              inline
+              int func () {
+                  return 0;
+              }
+        
+        %p
+          :markdown
+            Let file **test.c**
+        = preserve do
+          - code("c") do
+            :plain
+              #include "test.h"
+              
+              extern inline
+              int func ();
+        
+        %p
+          :markdown
+            Let file **main.c**
+        = preserve do
+          - code("c") do
+            :plain
+              #include "test.h"
+              
+              int main() {
+                  return func();
+              }
+        
+        %p
+          Such code can be compiled fine with any c99/gnu99 compiler.
+        = preserve do
+          - code("shell") do
+            :plain
+              gcc -std=gnu99 test.c -c -o test.o && gcc -std=gnu99 main.c -c -o main.o && gcc -std=gnu99 test.o main.o -o main && ./main ; echo $?
+              0
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              nm test.o
+              0000000000000000 T func
+              
+              nm main.o
+                               U func
+              0000000000000000 T main
+        
+        %p
+          But any gnu90/c90 compiler will fail to compile it.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main
+        = preserve do
+          - code do
+            :plain
+              main.o: In function `func':
+              main.c:(.text+0x0): multiple definition of `func'
+              test.o:test.c:(.text+0x0): first defined here
+              collect2: error: ld returned 1 exit status
+        
+        %p
+          :markdown
+            There is a problem with symbol **func** in **main.o**.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              nm test.o
+              0000000000000000 T func
+              
+              nm main.o
+              0000000000000000 T func
+              000000000000000b T main
+        
+        %p
+          There is a bit tricky solution.
+        
+        %p
+          :markdown
+            Change file **test.h**
+        = preserve do
+          - code("c") do
+            :plain
+              #if !defined(INCLUDED_FROM_TEST_C)
+              extern inline
+              #endif
+              
+              int func() {
+                  return 0;
+              }
+        
+        %p
+          :markdown
+            Change file **test.c**
+        = preserve do
+          - code("c") do
+            :plain
+              #define INCLUDED_FROM_TEST_C
+              #include "test.h"
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main && ./main ; echo $?
+              0
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              nm test.o
+              0000000000000000 T func
+              
+              nm main.o
+                               U func
+              0000000000000000 T main
+        
+        %p
+          This trick can be generalized in order to work with any C compiler.
+        %p
+          :markdown
+            Change file **test.h**
+        = preserve do
+          - code("c") do
+            :plain
+              #if defined(HAVE_C99_INLINE)
+              #    if !defined(INCLUDED_FROM_TEST_C)
+              inline
+              #    endif
+              #else
+              #    if !defined(INCLUDED_FROM_TEST_C)
+              extern inline
+              #    endif
+              #endif
+
+              int func() {
+                  return 0;
+              }
+        
+        %p
+          This code can be compiled in gcc 3-4, clang, tcc and other C compilers.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              gcc -DHAVE_C99_INLINE -std=gnu99 test.c -c -o test.o && gcc -DHAVE_C99_INLINE -std=gnu99 main.c -c -o main.o && gcc -std=gnu99 test.o main.o -o main && ./main ; echo $?
+              0
+              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main && ./main ; echo $?
+              0
+        
+        %p
+          Symbols in object files will be identical for both gnu90/c90 and gnu99/c99.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              nm test.o
+              0000000000000000 T func
+              
+              nm main.o
+                               U func
+              0000000000000000 T main
+        
+        %p
+          :markdown
+            You can see how this trick is using in my current project [tralloc](https://github.com/andrew-aladev/tralloc/blob/b5cb09f68cd311122efe56857fcaf33873cbf03e/src/tralloc/common.h)
+        
+        #disqus_thread
