@@ -1,6 +1,6 @@
 - content_for :title, "Inline workaround"
 - content_for :description, "How to force inline functions to work with all available C compilers."
-- content_for :keywords, "c, inline, extern, c90, c99, gcc, clang, tcc"
+- content_for :keywords, "c, inline, extern, c99, gcc, clang, tcc"
 - content_for :script do
   %script(type="text/javascript")
     :plain
@@ -14,12 +14,12 @@
     %li
       .label
         %h1
-          How to force inline functions to work with all available c90/c99 C compilers
+          How to force inline functions to work with all available C compilers, that supports inline keyword
         %p.date
           30.06.14
       .topic
         %p
-          Usage of inline functions in c90/c99 is not so trivial as it should be.
+          Usage of inline functions is not so trivial as it should be.
         
         %p
           :markdown
@@ -74,7 +74,7 @@
               0000000000000000 T main
         
         %p
-          But any gnu90/c90 compiler will fail to compile it.
+          But there are compilers that does not support c99/gnu99 but have inline keyword. For example gcc with "-std=gnu90".
         
         = preserve do
           - code("shell") do
@@ -145,7 +145,7 @@
               0000000000000000 T main
         
         %p
-          This trick can be generalized in order to work with any C compiler.
+          This trick can be generalized in order to work with almost any C compiler.
         %p
           :markdown
             Change file **test.h**
@@ -167,7 +167,7 @@
               }
         
         %p
-          This code can be compiled in gcc 3-4, clang, tcc and other C compilers.
+          This code can be compiled in gcc 3-4, clang, tcc, pcc and other C compilers.
         
         = preserve do
           - code("shell") do
@@ -178,7 +178,7 @@
               0
         
         %p
-          Symbols in object files will be identical for both gnu90/c90 and gnu99/c99.
+          Symbols in object files will be identical for both variants.
         
         = preserve do
           - code("shell") do
