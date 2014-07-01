@@ -60,8 +60,7 @@
         = preserve do
           - code("shell") do
             :plain
-              gcc -std=gnu99 test.c -c -o test.o && gcc -std=gnu99 main.c -c -o main.o && gcc -std=gnu99 test.o main.o -o main && ./main ; echo $?
-              0
+              gcc -std=gnu99 test.c -c -o test.o && gcc -std=gnu99 main.c -c -o main.o && gcc -std=gnu99 test.o main.o -o main
         
         = preserve do
           - code("shell") do
@@ -131,8 +130,7 @@
         = preserve do
           - code("shell") do
             :plain
-              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main && ./main ; echo $?
-              0
+              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main
         
         = preserve do
           - code("shell") do
@@ -167,15 +165,15 @@
               }
         
         %p
-          This code can be compiled in gcc 3-4, clang, tcc, pcc and other C compilers.
+          This code can be compiled in gcc 3-4, clang, tcc and other C compilers.
         
         = preserve do
           - code("shell") do
             :plain
-              gcc -DHAVE_C99_INLINE -std=gnu99 test.c -c -o test.o && gcc -DHAVE_C99_INLINE -std=gnu99 main.c -c -o main.o && gcc -std=gnu99 test.o main.o -o main && ./main ; echo $?
-              0
-              gcc -std=gnu90 test.c -c -o test.o && gcc -std=gnu90 main.c -c -o main.o && gcc -std=gnu90 test.o main.o -o main && ./main ; echo $?
-              0
+              gcc-4.8.3 -DHAVE_C99_INLINE -std=gnu99 test.c -c -o test.o && gcc-4.8.3 -DHAVE_C99_INLINE -std=gnu99 main.c -c -o main.o && gcc-4.8.3 -std=gnu99 test.o main.o -o main
+              gcc-3.4.6 test.c -c -o test.o && gcc-3.4.6 main.c -c -o main.o && gcc-3.4.6 test.o main.o -o main
+              clang -DHAVE_C99_INLINE -std=gnu99 test.c -c -o test.o && clang -DHAVE_C99_INLINE -std=gnu99 main.c -c -o main.o && clang -std=gnu99 test.o main.o -o main
+              tcc test.c -c -o test.o && tcc main.c -c -o main.o && tcc test.o main.o -o main
         
         %p
           Symbols in object files will be identical for both variants.
