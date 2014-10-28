@@ -6,22 +6,14 @@
     %li
       .label
         %h1
-          How to create arm and mips chroot environment in gentoo
+          How to force inline functions to work with all available C compilers, that supports inline keyword
         %p.date
-          18.03.14
+          30.06.14
       .topic
         %p
-          :markdown
-            **Crossdev** in gentoo is a utility, that can create toolchain for **cross compilation**. But cross compilation has disadvantages:
-        %ol
-          %li You can't run compiled software if host processor does not support target arch.
-          %li You should support toolchain build configuration for your program and for dependecies of your program, if it does not exist or broken.
-        %p
-          :markdown
-            It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
-            For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** and **mips** arch.
-        %a.more(href="/posts/arm-and-mips-chroot.html") Read more
-        
+          Usage of inline functions is not so trivial as it should be.
+        %a.more(href="/posts/inline-workaround.html") Read more
+
     %li
       .label
         %h1
@@ -41,14 +33,23 @@
         %p
           Lets create aarch64 chroot environment.
         %a.more(href="/posts/aarch64-chroot.html") Read more
-    
+
     %li
       .label
         %h1
-          How to force inline functions to work with all available C compilers, that supports inline keyword
+          How to create arm and mips chroot environment in gentoo
         %p.date
-          30.06.14
+          18.03.14
       .topic
         %p
-          Usage of inline functions is not so trivial as it should be.
-        %a.more(href="/posts/inline-workaround.html") Read more
+          :markdown
+            **Crossdev** in gentoo is a utility, that can create toolchain for **cross compilation**. But cross compilation has disadvantages:
+        %ol
+          %li You can't run compiled software if host processor does not support target arch.
+          %li You should support toolchain build configuration for your program and for dependecies of your program, if it does not exist or broken.
+        %p
+          :markdown
+            It is possible to avoid cross compilation by using chroot environment and emulator for target arch.
+            For example [qemu emulator](http://wiki.qemu.org/Main_Page) has great support of **arm** and **mips** arch.
+        %a.more(href="/posts/arm-and-mips-chroot.html") Read more        
+
