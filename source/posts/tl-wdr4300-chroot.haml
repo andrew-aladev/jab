@@ -1,0 +1,253 @@
+- content_for :title, "chroot for TL-WDR4300"
+- content_for :description, "How to use mips chroot environment in openwrt on TL-WDR4300."
+- content_for :keywords, "mips, softfloat, gcc, toolchain, stage3, qemu, cflags, chost"
+- content_for :script do
+  %script(type="text/javascript")
+    :plain
+      var disqus_shortname = "puchuu";
+      var disqus_title = "chroot for TL-WDR4300";
+- content_for :end_of_body do
+  = javascript_include_tag "//puchuu.disqus.com/embed.js"
+
+- content_for :content do
+  %ul.content
+    %li
+      .label
+        %h1
+          How to use mips chroot environment in openwrt on TL-WDR4300.
+        %p.date
+          04.01.15
+      .topic
+        %p
+          :markdown
+            [TL-WDR4300](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) is very powerfull wireless router.
+            I've bought it long time ago specially for openwrt.
+            I've attached usb-hdd to it, added swap, /home partitions and started to use openwrt.
+        
+        %p
+          :markdown
+            I've found, that opkg is very buggy, package versions are very old, many applications have no packages.
+            So I've continued to use openwrt with [image builder](http://wiki.openwrt.org/doc/howto/obtain.firmware.generate) and found it very stable.
+            You can find my configuration [here](http://git.puchuu.com/my-routers/tree/).
+            But I still wanted to use router as full featured gentoo box. I've found a free time today to implement this.
+        %br
+        
+        %p
+          First of all you should create crossdev environment for mips with softfloat.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo emerge -v sys-devel/crossdev
+              sudo crossdev -t mips-softfloat-linux-uclibc --g 4.8.4 --l 0.9.33.2-r12 --b 2.24-r3 --k 3.10
+              
+              sudo rm /usr/mips-softfloat-linux-uclibc/etc/portage/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/mips/13.0/ /usr/mips-softfloat-linux-uclibc/etc/portage/make.profile
+        
+        %p
+          :markdown
+            Set the following configuration lines to **/usr/mips-softfloat-linux-uclibc/etc/portage/make.conf**.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              USE="${ARCH} minimal -pam -nls"
+              CFLAGS="-O2 -pipe"
+              MAKEOPTS="-j9"
+              FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
+              USE_PYTHON="2.7"
+              PYTHON_TARGETS="python2_7"
+        
+        %p
+          Than you need to build minimal toolchain.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask
+              echo '>=sys-kernel/linux-headers-3.11' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask/sys-kernel > /dev/null
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang
+              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
+              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
+
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash =sys-apps/portage-2.2.8-r2 findutils wget =app-arch/tar-1.27.1-r2 gzip xz-utils diffutils sys-devel/make grep patch gawk
+
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4
+              sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4/target_header_dir.patch
+              
+        %p
+          :markdown
+            Comment the following lines in **/usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild**.
+            
+        = preserve do
+          - code("shell") do
+            :plain
+              #if [[ ${CATEGORY} != cross-* ]] ; then
+              #    PDEPEND="${PDEPEND} elibc_glibc? ( >=sys-libs/glibc-2.8 )"
+              #fi
+        
+        %p
+          :markdown
+            Comment the following lines in **/usr/mips-softfloat-linux-uclibc/usr/lib/portage/bin/isolated-functions.sh**.
+            
+        = preserve do
+          - code("shell") do
+            :plain
+              #for x in $pipestatus ; do
+              #       # Allow SIGPIPE through (128 + 13)
+              #       # [[ $x -ne 0 && $x -ne ${PORTAGE_SIGPIPE_STATUS:-141} ]] && die "$@"
+              #done
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo ebuild /usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild manifest
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-libs/uclibc
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-devel/gcc
+        
+        %p
+          You can copy toolchain to your workspace now and start prepairing chroot.
+       
+        = preserve do
+          - code("shell") do
+            :plain
+              mkdir -p ~/workspace/
+              sudo cp -R /usr/mips-softfloat-linux-uclibc ~/workspace/
+        
+        %br
+        %p
+          It is time to install qemu.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo mkdir -p /etc/portage/env/
+              echo 'QEMU_USER_TARGETS="x86_64 arm mips"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
+              
+              sudo mkdir -p /etc/portage/package.env/
+              echo 'app-emulation/qemu qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
+              
+              sudo mkdir -p /etc/portage/package.use/
+              echo 'app-emulation/qemu static-user' | sudo tee -a /etc/portage/package.use/app-emulation > /dev/null
+              
+              sudo emerge -v app-emulation/qemu
+        
+        %p
+          :markdown
+            Now you can register **qemu-mips** in kernel ([with PO flags](https://bugs.gentoo.org/show_bug.cgi?id=516454)) and copy qemu emulator to chroot.
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rc-service qemu-binfmt start
+              sudo cp /usr/bin/qemu-mips ~/workspace/mips-softfloat-linux-uclibc/usr/bin/
+        
+        %p
+          Clean chroot environment.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo rm -r ~/workspace/mips-softfloat-linux-uclibc/tmp/portage/*
+              sudo rm ~/workspace/mips-softfloat-linux-uclibc/etc/portage/make.profile
+              sudo rm -r ~/workspace/mips-softfloat-linux-uclibc/etc/portage/env
+              sudo rm -r ~/workspace/mips-softfloat-linux-uclibc/etc/portage/patches
+
+              sudo mkdir -p ~/workspace/mips-softfloat-linux-uclibc/proc
+              sudo mkdir -p ~/workspace/mips-softfloat-linux-uclibc/dev
+              sudo mkdir -p ~/workspace/mips-softfloat-linux-uclibc/sys
+              sudo mkdir -p ~/workspace/mips-softfloat-linux-uclibc/root
+              sudo mkdir -p ~/workspace/mips-softfloat-linux-uclibc/usr/portage/
+
+              echo 'root:x:0:0:root:/root:/bin/bash
+              portage:x:250:250:portage:/var/tmp/portage:/bin/false' | sudo tee -a ~/workspace/mips-softfloat-linux-uclibc/etc/passwd > /dev/null
+              echo 'root:x:0:root
+              portage::250:portage' | sudo tee -a ~/workspace/mips-softfloat-linux-uclibc/etc/group > /dev/null
+
+              echo 'LANG="en_US.UTF-8"
+              LC_COLLATE="C"' | sudo tee -a ~/workspace/mips-softfloat-linux-uclibc/etc/env.d/02locale > /dev/null
+
+              echo 'en_US.UTF-8 UTF-8' | sudo tee -a ~/workspace/mips-softfloat-linux-uclibc/etc/locale.gen > /dev/null
+        
+        %p
+          :markdown
+            Set **~/workspace/mips-softfloat-linux-uclibc/etc/portage/make.conf** to something like:
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              SYNC="rsync://mirror.yandex.ru/gentoo-portage/"
+              GENTOO_MIRRORS="http://mirror.yandex.ru/gentoo-distfiles/"
+              PORTAGE_NICENESS="19"
+              PORTAGE_IONICE_COMMAND="ionice -c2 -n7 -p \${PID}"
+
+              CHOST="mips-softfloat-linux-uclibc"
+              CFLAGS="-O2 -pipe"
+              CXXFLAGS="${CFLAGS}"
+              MAKEOPTS="-j9"
+
+              FEATURES=""
+              ACCEPT_KEYWORDS="~mips"
+              LINGUAS="en"
+
+              USE="-pam -nls"
+              
+              ELIBC="uclibc"
+              
+              PORTDIR="/usr/portage"
+              PORTDIR_OVERLAY="/usr/portage"
+
+              USE_PYTHON="2.7"
+              PYTHON_TARGETS="python2_7"
+        
+        %br
+        %p
+          Now mount and chroot.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo wget "http://mirror.yandex.ru/gentoo-distfiles/snapshots/portage-latest.tar.bz2" -O /tmp/portage-latest.tar.bz2
+              sudo tar xvjf /tmp/portage-latest.tar.bz2 -C ~/workspace/mips-softfloat-linux-uclibc/usr/
+
+              sudo mount -t proc none ~/workspace/mips-softfloat-linux-uclibc/proc/
+              sudo mount -o bind /sys ~/workspace/mips-softfloat-linux-uclibc/sys/
+              sudo mount -o bind /dev ~/workspace/mips-softfloat-linux-uclibc/dev/
+              sudo mount -o bind /dev/pts/ ~/workspace/mips-softfloat-linux-uclibc/dev/pts/
+              sudo mount -o bind /dev/shm/ ~/workspace/mips-softfloat-linux-uclibc/dev/shm/
+              sudo cp /etc/resolv.conf ~/workspace/mips-softfloat-linux-uclibc/etc/
+
+              sudo chroot ~/workspace/mips-softfloat-linux-uclibc/ /bin/bash
+        
+        %p
+          Build usual minimal software. This process will be slow (especially configure).
+              
+        = preserve do
+          - code("shell") do
+            :plain
+              chmod a+w /tmp
+              chmod a+w /var/tmp
+              env-update
+              ln -s /usr/portage/profiles/default/linux/mips/13.0 /etc/portage/make.profile
+              
+              rm /usr/portage/metadata/timestamp.chk
+              emerge --sync
+              
+              echo '' > /var/lib/portage/world
+              
+              USE="-nls" emerge -v1 tar
+              
+              mkdir -p /etc/portage/package.keywords/
+              echo '=sys-apps/baselayout-prefix-2.2-r3 **' >> /etc/portage/package.keywords/sys-apps
+              emerge -v1 baselayout-prefix
+              source /etc/profile
+              
+              emerge -v1 gzip
+              locale-gen
+              
+              emerge -v1 gawk
+              emerge -v1 net-tools
+              USE="-berkdb" emerge -v1 perl
+              USE="internal-glib" emerge -v1 pkgconfig
+        
+        
+        
+        #disqus_thread

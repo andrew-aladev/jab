@@ -1,11 +1,11 @@
 source "https://rubygems.org/"
 
-gem "bundler",      "~> 1.7.3"
+gem "bundler",      "~> 1.7.4"
 gem "rb-inotify",   "~> 0.9.5"
-gem "eventmachine", "~> 1.0.3"
+gem "eventmachine", "~> 1.0.4"
 
-gem "middleman",             "~> 3.3.6"
-gem "middleman-deploy",      "~> 0.3.0"
+gem "middleman",             "~> 3.3.7"
+gem "middleman-deploy",      "~> 1.0.0"
 gem "closure-compiler",      "~> 1.1.11"
 gem "yui-compressor",        "~> 0.12.0"
 gem "middleman-minify-html", "~> 3.4.0"
