@@ -29,7 +29,7 @@
             I've found, that opkg is very buggy, package versions are very old, many applications have no packages.
             So I've continued to use openwrt with [image builder](http://wiki.openwrt.org/doc/howto/obtain.firmware.generate) and found it very stable.
             You can find my configuration [here](http://git.puchuu.com/my-routers/tree/).
-            But I still wanted to use router as full featured gentoo box. I've found a free time today to implement this.
+            But I still wanted to use router as full featured gentoo box.
         %br
         
         %p
@@ -38,6 +38,8 @@
           - code("shell") do
             :plain
               sudo emerge -v sys-devel/crossdev
+              mkdir -p /etc/portage/package.use
+              echo 'cross-mips-softfloat-linux-uclibc/gcc -sanitize' | sudo tee -a /etc/portage/package.use/sys-devel > /dev/null
               sudo crossdev -t mips-softfloat-linux-uclibc --g 4.8.4 --l 0.9.33.2-r12 --b 2.24-r3 --k 3.10
               
               sudo rm /usr/mips-softfloat-linux-uclibc/etc/portage/make.profile
@@ -127,6 +129,8 @@
               echo 'app-emulation/qemu qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
               
               sudo mkdir -p /etc/portage/package.use/
+              echo 'sys-libs/zlib static-libs' | sudo tee -a /etc/portage/package.use/sys-libs > /dev/null
+              echo 'dev-libs/glib static-libs' | sudo tee -a /etc/portage/package.use/dev-libs > /dev/null
               echo 'app-emulation/qemu static-user' | sudo tee -a /etc/portage/package.use/app-emulation > /dev/null
               
               sudo emerge -v app-emulation/qemu
@@ -232,8 +236,6 @@
               emerge --sync
               
               echo '' > /var/lib/portage/world
-              
-              USE="-nls" emerge -v1 tar
               
               mkdir -p /etc/portage/package.keywords/
               echo '=sys-apps/baselayout-prefix-2.2-r3 **' >> /etc/portage/package.keywords/sys-apps
