@@ -183,6 +183,11 @@
           Please do not use vanilla router TL-WDR4300 24/7 with 100% cpu. It has no heatsinks at all, you should add heatsinks first.
           I've cut radiator from old mothernboard into small peaces and glued it on SOC, radio and ethernet switch.
           I was able to warm up router to 35 degrees (home temperature - 24, case is opened).
+
+        %p
+          :markdown
+            Openwrt kernel should have **CONFIG_MIPS_FPU_EMU** enabled.
+            If you will try to make chroot without **CONFIG_MIPS_FPU_EMU** - chroot program will hang with 100% cpu usage on **execve** call in kernel.
         
         %p
           Making chroot from router.
