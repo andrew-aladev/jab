@@ -53,7 +53,7 @@
           - code("shell") do
             :plain
               USE="${ARCH} minimal -pam -nls"
-              CFLAGS="-O2 -pipe"
+              CFLAGS="-O2 -march=74kc -pipe"
               MAKEOPTS="-j9"
               FEATURES="-collision-protect -protect-owned sandbox noman nodoc noinfo"
               USE_PYTHON="2.7"
@@ -71,15 +71,15 @@
               echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
               echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
 
-              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash =sys-apps/portage-2.2.8-r2 findutils wget =app-arch/tar-1.27.1-r2 gzip xz-utils diffutils sys-devel/make grep patch gawk
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash =sys-apps/portage-2.2.8-r2 =app-arch/tar-1.27.1-r2 gzip xz-utils findutils wget diffutils sys-devel/make grep patch gawk nano
 
               sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4
               sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4/target_header_dir.patch
-              
+        
         %p
           :markdown
             Comment the following lines in **/usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild**.
-            
+        
         = preserve do
           - code("shell") do
             :plain
@@ -90,7 +90,7 @@
         %p
           :markdown
             Comment the following lines in **/usr/mips-softfloat-linux-uclibc/usr/lib/portage/bin/isolated-functions.sh**.
-            
+        
         = preserve do
           - code("shell") do
             :plain
@@ -107,42 +107,14 @@
               sudo mips-softfloat-linux-uclibc-emerge -v1 sys-devel/gcc
         
         %p
-          You can copy toolchain to your workspace now and start prepairing chroot.
-       
+          :markdown
+            You can copy toolchain to your workspace now and start prepairing chroot. You can continue using **/usr/mips-softfloat-linux-uclibc** for other puproses.
+        
         = preserve do
           - code("shell") do
             :plain
               mkdir -p ~/workspace/
               sudo cp -R /usr/mips-softfloat-linux-uclibc ~/workspace/
-        
-        %br
-        %p
-          It is time to install qemu.
-        
-        = preserve do
-          - code("shell") do
-            :plain
-              sudo mkdir -p /etc/portage/env/
-              echo 'QEMU_USER_TARGETS="x86_64 arm mips"' | sudo tee /etc/portage/env/qemu.conf > /dev/null
-              
-              sudo mkdir -p /etc/portage/package.env/
-              echo 'app-emulation/qemu qemu.conf' | sudo tee -a /etc/portage/package.env/app-emulation > /dev/null
-              
-              sudo mkdir -p /etc/portage/package.use/
-              echo 'sys-libs/zlib static-libs' | sudo tee -a /etc/portage/package.use/sys-libs > /dev/null
-              echo 'dev-libs/glib static-libs' | sudo tee -a /etc/portage/package.use/dev-libs > /dev/null
-              echo 'app-emulation/qemu static-user' | sudo tee -a /etc/portage/package.use/app-emulation > /dev/null
-              
-              sudo emerge -v app-emulation/qemu
-        
-        %p
-          :markdown
-            Now you can register **qemu-mips** in kernel ([with PO flags](https://bugs.gentoo.org/show_bug.cgi?id=516454)) and copy qemu emulator to chroot.
-        = preserve do
-          - code("shell") do
-            :plain
-              sudo rc-service qemu-binfmt start
-              sudo cp /usr/bin/qemu-mips ~/workspace/mips-softfloat-linux-uclibc/usr/bin/
         
         %p
           Clean chroot environment.
@@ -184,46 +156,73 @@
               PORTAGE_IONICE_COMMAND="ionice -c2 -n7 -p \${PID}"
 
               CHOST="mips-softfloat-linux-uclibc"
-              CFLAGS="-O2 -pipe"
+              CFLAGS="-O2 -march=74kc -pipe"
               CXXFLAGS="${CFLAGS}"
-              MAKEOPTS="-j9"
+              MAKEOPTS="-j2"
 
               FEATURES=""
               ACCEPT_KEYWORDS="~mips"
               LINGUAS="en"
 
-              USE="-pam -nls"
+              USE="
+              threads
+              icu
+              custom-cflags custom-cxxflags custom-optimization
+              "
               
               ELIBC="uclibc"
               
               PORTDIR="/usr/portage"
               PORTDIR_OVERLAY="/usr/portage"
 
-              USE_PYTHON="2.7"
-              PYTHON_TARGETS="python2_7"
+              USE_PYTHON="2.7 3.3 3.4"
+              PYTHON_TARGETS="python2_7 python3_3 python3_4"
         
         %br
         %p
-          Now mount and chroot.
+          Please do not use vanilla router TL-WDR4300 24/7 with 100% cpu. It has no heatsinks at all, you should add heatsinks first.
+          I've cut radiator from old mothernboard into small peaces and glued it on SOC, radio and ethernet switch.
+          I was able to warm up router to 35 degrees (home temperature - 24, case is opened).
+        
+        %p
+          Making chroot from router.
         
         = preserve do
           - code("shell") do
             :plain
               sudo wget "http://mirror.yandex.ru/gentoo-distfiles/snapshots/portage-latest.tar.bz2" -O /tmp/portage-latest.tar.bz2
               sudo tar xvjf /tmp/portage-latest.tar.bz2 -C ~/workspace/mips-softfloat-linux-uclibc/usr/
+              cd ~/workspace/mips-softfloat-linux-uclibc && sudo tar cvf ../mips-softfloat-linux-uclibc.tar *
+              scp ~/workspace/mips-softfloat-linux-uclibc.tar router:/home/puchuu/temp/
+              
+              ssh router
+              mkdir ~/mips-softfloat-linux-uclibc
+              sudo tar xvf ~/temp/mips-softfloat-linux-uclibc.tar -C ~/mips-softfloat-linux-uclibc
+              rm ~/temp/mips-softfloat-linux-uclibc.tar
 
-              sudo mount -t proc none ~/workspace/mips-softfloat-linux-uclibc/proc/
-              sudo mount -o bind /sys ~/workspace/mips-softfloat-linux-uclibc/sys/
-              sudo mount -o bind /dev ~/workspace/mips-softfloat-linux-uclibc/dev/
-              sudo mount -o bind /dev/pts/ ~/workspace/mips-softfloat-linux-uclibc/dev/pts/
-              sudo mount -o bind /dev/shm/ ~/workspace/mips-softfloat-linux-uclibc/dev/shm/
-              sudo cp /etc/resolv.conf ~/workspace/mips-softfloat-linux-uclibc/etc/
-
-              sudo chroot ~/workspace/mips-softfloat-linux-uclibc/ /bin/bash
+              echo '#!/bin/sh
+              mount -t proc none /home/puchuu/mips-softfloat-linux-uclibc/proc/
+              mount -o bind /sys /home/puchuu/mips-softfloat-linux-uclibc/sys/
+              mount -o bind /dev /home/puchuu/mips-softfloat-linux-uclibc/dev/
+              mount -o bind /dev/pts/ /home/puchuu/mips-softfloat-linux-uclibc/dev/pts/
+              mount -o bind /dev/shm/ /home/puchuu/mips-softfloat-linux-uclibc/dev/shm/
+              cp /etc/resolv.conf /home/puchuu/mips-softfloat-linux-uclibc/etc/' | sudo tee -a ~/mips-softfloat-linux-uclibc/mount.sh > /dev/null
+              sudo chmod +x ~/mips-softfloat-linux-uclibc/mount.sh
+              
+              echo '#!/bin/sh
+              umount /home/puchuu/mips-softfloat-linux-uclibc/proc/
+              umount /home/puchuu/mips-softfloat-linux-uclibc/sys/
+              umount /home/puchuu/mips-softfloat-linux-uclibc/dev/pts/
+              umount /home/puchuu/mips-softfloat-linux-uclibc/dev/shm/
+              umount /home/puchuu/mips-softfloat-linux-uclibc/dev/' | sudo tee -a ~/mips-softfloat-linux-uclibc/umount.sh > /dev/null
+              sudo chmod +x ~/mips-softfloat-linux-uclibc/umount.sh
+              
+              sudo ~/mips-softfloat-linux-uclibc/mount.sh
+              sudo chroot ~/mips-softfloat-linux-uclibc/ /bin/bash
         
         %p
-          Build usual minimal software. This process will be slow (especially configure).
-              
+          Build usual minimal software.
+        
         = preserve do
           - code("shell") do
             :plain
