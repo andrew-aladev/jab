@@ -47,7 +47,7 @@
         
         %p
           :markdown
-            Set the following configuration lines to **/usr/mips-softfloat-linux-uclibc/etc/portage/make.conf**.
+            Set the following configuration lines to `/usr/mips-softfloat-linux-uclibc/etc/portage/make.conf`.
         
         = preserve do
           - code("shell") do
@@ -60,25 +60,8 @@
               PYTHON_TARGETS="python2_7"
         
         %p
-          Than you need to build minimal toolchain.
-        
-        = preserve do
-          - code("shell") do
-            :plain
-              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask
-              echo '>=sys-kernel/linux-headers-3.11' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask/sys-kernel > /dev/null
-              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang
-              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
-              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
-
-              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-kernel/linux-headers sys-devel/binutils bash =sys-apps/portage-2.2.8-r2 =app-arch/tar-1.27.1-r2 gzip xz-utils findutils wget diffutils sys-devel/make grep patch gawk nano
-
-              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4
-              sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4/target_header_dir.patch
-        
-        %p
           :markdown
-            Comment the following lines in **/usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild**.
+            Comment the following lines in `/usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild`.
         
         = preserve do
           - code("shell") do
@@ -88,8 +71,32 @@
               #fi
         
         %p
+          Than you need to build minimal toolchain.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo ebuild /usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild manifest
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4
+              sudo wget "https://www.puchuu.com/patches/sys-devel/gcc-4.8.2-r1/target_header_dir.patch" -O /usr/mips-softfloat-linux-uclibc/etc/portage/patches/sys-devel/gcc-4.8.4/target_header_dir.patch
+              
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask
+              echo '>=sys-kernel/linux-headers-3.11' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/package.mask/sys-kernel > /dev/null
+              sudo mkdir -p /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang
+              echo 'export ac_cv_file__dev_ptmx=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
+              echo 'export ac_cv_file__dev_ptc=no' | sudo tee -a /usr/mips-softfloat-linux-uclibc/etc/portage/env/dev-lang/python > /dev/null
+              
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-libs/uclibc
+              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-kernel/linux-headers sys-devel/binutils sys-devel/gcc
+              sudo mips-softfloat-linux-uclibc-emerge -v1 findutils wget diffutils sys-devel/make grep patch gawk
+              sudo mips-softfloat-linux-uclibc-emerge -v1 =app-arch/tar-1.27.1-r2 gzip xz-utils
+              sudo mips-softfloat-linux-uclibc-emerge -v1 bash nano
+              sudo mips-softfloat-linux-uclibc-emerge -v1 =sys-apps/portage-2.2.8-r2
+        
+        %p
           :markdown
-            Comment the following lines in **/usr/mips-softfloat-linux-uclibc/usr/lib/portage/bin/isolated-functions.sh**.
+            The reason of using old portage is [this bug](https://bugs.gentoo.org/show_bug.cgi?id=534706).
+            Comment the following lines in `/usr/mips-softfloat-linux-uclibc/usr/lib/portage/bin/isolated-functions.sh`.
         
         = preserve do
           - code("shell") do
@@ -99,16 +106,11 @@
               #       # [[ $x -ne 0 && $x -ne ${PORTAGE_SIGPIPE_STATUS:-141} ]] && die "$@"
               #done
         
-        = preserve do
-          - code("shell") do
-            :plain
-              sudo ebuild /usr/portage/sys-devel/gcc/gcc-4.8.4.ebuild manifest
-              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-libs/uclibc
-              sudo mips-softfloat-linux-uclibc-emerge -v1 sys-devel/gcc
-        
         %p
           :markdown
-            You can copy toolchain to your workspace now and start prepairing chroot. You can continue using **/usr/mips-softfloat-linux-uclibc** for other puproses.
+            You can copy toolchain to your workspace now and start prepairing chroot.
+            You can continue using `/usr/mips-softfloat-linux-uclibc` for other puproses.
+            For example you can build applications, that supports cross compilation on powerfull machine and provide them to router as binary overlay.
         
         = preserve do
           - code("shell") do
@@ -145,7 +147,7 @@
         
         %p
           :markdown
-            Set **~/workspace/mips-softfloat-linux-uclibc/etc/portage/make.conf** to something like:
+            Set `~/workspace/mips-softfloat-linux-uclibc/etc/portage/make.conf` to something like:
         
         = preserve do
           - code("shell") do
@@ -178,16 +180,20 @@
               USE_PYTHON="2.7 3.3 3.4"
               PYTHON_TARGETS="python2_7 python3_3 python3_4"
         
-        %br
         %p
-          Please do not use vanilla router TL-WDR4300 24/7 with 100% cpu. It has no heatsinks at all, you should add heatsinks first.
-          I've cut radiator from old mothernboard into small peaces and glued it on SOC, radio and ethernet switch.
-          I was able to warm up router to 35 degrees (home temperature - 24, case is opened).
+          :markdown
+            Please do not use vanilla router TL-WDR4300 24/7 with 100% cpu. It has no heatsinks at all, you should add heatsinks first.
+            I've cut radiator from old mothernboard into small peaces and
+            [glued](http://www.aliexpress.com/item/3pcs-lot-Thermal-Conductive-Heatsink-Plaster-Viscous-Adhesive-Compound-Glue-For-PC-GPU-IC/996730497.html)
+            it on SOC, radio and ethernet switch.
+            I was able to warm up router to 35 degrees (home temperature - 24, case is opened).
+        
+        = partial "partials/utils/picture", :locals => { :src => "pictures/router.jpg" }
 
         %p
           :markdown
-            Openwrt kernel should have **CONFIG_MIPS_FPU_EMU** enabled.
-            If you will try to make chroot without **CONFIG_MIPS_FPU_EMU** - chroot program will hang with 100% cpu usage on **execve** call in kernel.
+            Please note that openwrt kernel should have `CONFIG_MIPS_FPU_EMU` enabled.
+            If you will try to make chroot without `CONFIG_MIPS_FPU_EMU` - `execve` call in kernel will hang with 100% cpu usage.
         
         %p
           Making chroot from router.

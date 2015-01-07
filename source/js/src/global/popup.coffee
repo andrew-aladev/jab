@@ -29,6 +29,7 @@ class Popup
 
   wrapper_click : (event) ->
     event.stopPropagation()
+    @hide()
   
   overlay_click : (event) ->
     @hide()

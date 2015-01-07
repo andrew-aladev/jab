@@ -2,7 +2,7 @@
   position    : relative;
   display     : block;
   margin      : 10px 0;
-  padding     : 0.5em 0 0.5em 2em;
+  padding     : 1em 0 1em 2em;
   font-family : "meslo_regular";
   font-size   : 0.9em;
   white-space : pre-wrap;
@@ -248,4 +248,14 @@
   .w {
     color : #bbbbbb;
   }
+}
+
+.content > li .topic p code {
+  display       : inline-block;
+  padding-right : 1em;
+  font-family   : "meslo_regular";
+  font-size     : 0.9em;
+  line-height   : 2em;
+  white-space   : pre-wrap;
+  background    : #f7f7f7;
 }
