@@ -1,6 +1,6 @@
 - content_for :title, "chroot for TL-WDR4300"
 - content_for :description, "How to use mips chroot environment in openwrt on TL-WDR4300."
-- content_for :keywords, "mips, softfloat, gcc, toolchain, stage3, qemu, cflags, chost"
+- content_for :keywords, "tp-link, TL-WDR4300, openwrt, mips, softfloat, gcc, musl, toolchain, stage3, chroot"
 - content_for :script do
   %script(type="text/javascript")
     :plain
@@ -33,17 +33,67 @@
         %br
         
         %p
-          First of all you should create crossdev environment for mips with softfloat.
+          First of all you should create crossdev environment for router's mips cpu.
+          I've used part of patches, that makes sense for mips and musl.
+          Please checkout the most recent patches from linaro and openwrt teams.
         = preserve do
           - code("shell") do
             :plain
-              sudo emerge -v sys-devel/crossdev
-              mkdir -p /etc/portage/package.use
-              echo 'cross-mips-softfloat-linux-uclibc/gcc -sanitize' | sudo tee -a /etc/portage/package.use/sys-devel > /dev/null
-              sudo crossdev -t mips-softfloat-linux-uclibc --g 4.8.4 --l 0.9.33.2-r12 --b 2.24-r3 --k 3.10
+              mkdir -p ~/workspace/ && cd ~/workspace
+              git clone git://git.openwrt.org/openwrt.git && cd openwrt/toolchain/gcc/patches/4.8-linaro/
               
-              sudo rm /usr/mips-softfloat-linux-uclibc/etc/portage/make.profile
-              sudo ln -s /usr/portage/profiles/default/linux/mips/13.0/ /usr/mips-softfloat-linux-uclibc/etc/portage/make.profile
+              sudo mkdir -p /etc/portage/patches/cross-mips-softfloat-linux-musl/gcc-4.8.4/
+              sudo cp {\
+              002-weak_data_fix,\
+              003-universal_initializer,\
+              200-musl_config,\
+              201-musl_arm,\
+              202-musl_mips,\
+              203-musl_powerpc,\
+              204-musl_sh,\
+              205-musl_x86,\
+              206-musl_aarch64,\
+              207-musl_fixincludes,\
+              208-musl_gomp,\
+              209-musl_libstdc++,\
+              220-musl_mips_softfloat,\
+              221-musl_mips64,\
+              850-use_shared_libgcc,\
+              860-use_eh_frame,\
+              930-fix-mips-noexecstack\
+              }'.patch' /etc/portage/patches/cross-mips-softfloat-linux-musl/gcc-4.8.4/
+              
+              sudo mkdir -p /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
+              sudo cp ~/workspace/openwrt/toolchain/musl/patches/* /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
+              
+              mkdir -p /etc/portage/package.use
+              echo 'cross-mips-softfloat-linux-musl/gcc -sanitize' | sudo tee -a /etc/portage/package.use/sys-devel > /dev/null
+              
+        %p
+          :markdown
+            Move `epatch_user` in `/usr/portage/sys-libs/musl/musl-1.1.5.ebuild` to the proper place.
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              pkg_setup() {
+                  ...
+                  # epatch_user
+              }
+              src_prepare() {
+                  epatch_user
+              }
+        
+        = preserve do
+          - code("shell") do
+            :plain
+              sudo ebuild /usr/portage/sys-libs/musl/musl-1.1.5.ebuild manifest
+              
+              sudo emerge -v sys-devel/crossdev
+              CFLAGS="-O2 -pipe" sudo -E crossdev -t mips-softfloat-linux-musl --g 4.8.4 --l 1.1.15 --b 2.24-r3 --k 3.10
+              
+              sudo rm /usr/mips-softfloat-linux-musl/etc/portage/make.profile
+              sudo ln -s /usr/portage/profiles/default/linux/mips/13.0/ /usr/mips-softfloat-linux-musl/etc/portage/make.profile
         
         %p
           :markdown
@@ -115,7 +165,6 @@
         = preserve do
           - code("shell") do
             :plain
-              mkdir -p ~/workspace/
               sudo cp -R /usr/mips-softfloat-linux-uclibc ~/workspace/
         
         %p
