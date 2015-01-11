@@ -63,12 +63,18 @@
               930-fix-mips-noexecstack\
               }'.patch' /etc/portage/patches/cross-mips-softfloat-linux-musl/gcc-4.8.4/
               
-              sudo mkdir -p /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
-              sudo cp ~/workspace/openwrt/toolchain/musl/patches/* /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
-              
               mkdir -p /etc/portage/package.use
               echo 'cross-mips-softfloat-linux-musl/gcc -sanitize' | sudo tee -a /etc/portage/package.use/sys-devel > /dev/null
               
+              sudo mkdir -p /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
+              sudo cp ~/workspace/openwrt/toolchain/musl/patches/* /etc/portage/patches/cross-mips-softfloat-linux-musl/musl-1.1.5/
+              
+              sudo mkdir -p /etc/portage/patches/cross-mips-softfloat-linux-musl/binutils-2.24-r3/
+              sudo cp {\
+              200-mips_non_pic,\
+              300-012_check_ldrunpath_length,\
+              310-backport_fPIE_mips_fix\
+              }'.patch' /etc/portage/patches/cross-mips-softfloat-linux-musl/binutils-2.24-r3/
         %p
           :markdown
             Move `epatch_user` in `/usr/portage/sys-libs/musl/musl-1.1.5.ebuild` to the proper place.
