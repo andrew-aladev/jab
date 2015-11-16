@@ -1,6 +1,5 @@
 source "https://rubygems.org/"
 
-gem "bundler",      "~> 1.7.4"
 gem "rb-inotify",   "~> 0.9.5"
 gem "eventmachine", "~> 1.0.4"
 
