@@ -1,6 +1,8 @@
 source "https://rubygems.org"
 
-gem "middleman"
+gem "jekyll"
+gem "jekyll-haml-markup"
+gem "jekyll-seo-tag"
 
 group :development, :test do
   gem "rubocop"

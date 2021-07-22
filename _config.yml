@@ -1,0 +1,14 @@
+plugins:
+  - jekyll-haml-markup
+  - jekyll-seo-tag
+
+source: src
+destination: build
+layouts_dir: layouts
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+safe: true
+strict_front_matter: true
