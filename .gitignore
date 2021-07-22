@@ -1,6 +1,5 @@
-source/img/global-*.png
-source/img/content-*.png
-source/img/footer-*.png
-source/img/head-*.png
+.bundle
+.cache
+.sass-cache
+build/*
 Gemfile.lock
-build
