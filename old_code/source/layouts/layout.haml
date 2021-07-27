@@ -1,17 +1,10 @@
 !!! 5
 %html(lang="en")
   %head
-    %meta(charset="utf-8")
-    %meta(name="viewport" content="width=device-width, initial-scale=0.7")
-    %meta(name="description" content="#{yield_content :description}")
-    %meta(name="keywords" content="gentoo, programming, development, blog, pure c, anime, puchuu, #{yield_content :keywords}")
-    %title
-      = yield_content :title
-    %link(rel="icon" type="image/ico" href="/img/favicon.ico")
     = stylesheet_link_tag "all"
     = javascript_include_tag "all"
     = yield_content :script
-  
+
   %body
     = partial "partials/head"
     = yield_content :content

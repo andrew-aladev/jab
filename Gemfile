@@ -4,6 +4,10 @@ gem "jekyll"
 gem "jekyll-haml-markup"
 gem "jekyll-seo-tag"
 
+group :development do
+  gem "webrick"
+end
+
 group :development, :test do
   gem "rubocop"
   gem "rubocop-performance"

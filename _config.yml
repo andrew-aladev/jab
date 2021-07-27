@@ -10,3 +10,6 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - layouts
+  - img/favicon/*
+  - img/icons/*
+  - img/src/*
