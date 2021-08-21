@@ -4,7 +4,7 @@ set -e
 DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "$DIR"
 
-cd "../src/img"
+cd "../../src/img"
 
 while read -r icon; do
   echo "- optimizing icon: $icon"
@@ -12,4 +12,4 @@ while read -r icon; do
 done < <(find "favicon" -type f -name "*.png")
 
 echo "- creating favicon.ico"
-convert "favicon/"*.png "favicon.ico"
+convert "favicon/"*.png "generated/favicon.ico"

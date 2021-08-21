@@ -1,0 +1,16 @@
+{
+  "name": "jab",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "sprites": "gulp sprites"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp.spritesmith": "^6.12.1",
+    "merge-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "npm-check-updates": "^11.8.3"
+  }
+}
