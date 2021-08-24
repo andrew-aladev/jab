@@ -23,5 +23,6 @@ rm -f "Gemfile.lock"
   bundle update \
 "
 
+./scripts/font/all.sh
 ./scripts/img/favicon.sh
 ./scripts/img/sprites.sh

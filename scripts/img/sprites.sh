@@ -8,9 +8,9 @@ cd "../.."
 
 yarn run sprites
 
-cd "src/img"
+cd "src/img/generated"
 
 while read -r sprite; do
   echo "- optimizing sprite: $sprite"
   pngcrush -ow -brute "$sprite"
-done < <(find "generated" -type f -name "*.png")
+done < <(find "." -type f -name "*.png")
