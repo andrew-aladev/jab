@@ -4,9 +4,11 @@ set -e
 DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "$DIR"
 
-CONVERT_SCRIPT="$(pwd)/convert.pe"
+CURRENT_DIR=$(pwd)
 
 cd "../../src/font/roboto"
+
+ARCHIVE_URL="https://github.com/googlefonts/roboto/releases/latest/download/roboto-unhinted.zip"
 
 FONT_NAMES=(
   "Roboto-Bold"
@@ -30,9 +32,11 @@ EXTENSIONS_FOR_CONVERT=(
   "woff2"
 )
 
+CONVERT_SCRIPT="${CURRENT_DIR}/convert.pe"
+
 # Downloading archive.
 ARCHIVE=$(mktemp)
-wget "https://github.com/googlefonts/roboto/releases/latest/download/roboto-unhinted.zip" -O "$ARCHIVE"
+wget "$ARCHIVE_URL" -O "$ARCHIVE"
 
 # Unpacking archive.
 ARCHIVE_DIR=$(mktemp --directory)
